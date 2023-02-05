@@ -315,7 +315,7 @@ for subdir, dirs, files in os.walk(saveDir):
                 file.write(f"\"{makeAndModelStr}\": {{\n")
                 file.write(f"\"model\": \"{model}\",\n")
                 file.write(f"\"pos_num\": \"{pos_num}\",\n")
-                file.write(f"\"price\": \"{price}\"\n")
+                file.write(f"\"price\": \"{price}\",\n")
                 file.write(f"\"rating\": \"{rating}\",\n")
                 file.write(f"\"num_ratings\": \"{num_ratings}\",\n")
                 file.write(f"\"description\": \"{description}\",\n")

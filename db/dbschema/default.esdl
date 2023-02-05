@@ -11,7 +11,7 @@ module default {
     multi link ratings -> Review;
     
     link brand -> Manufacturer;
-    link seller -> Vendor;
+    multi link seller -> Vendor;
   }
 
   type Review {

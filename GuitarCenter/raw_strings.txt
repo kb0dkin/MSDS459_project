@@ -1,0 +1,98 @@
+Alhambra/1O-P-Classical-Acoustic-Guitar-Natural-1500000012000
+\u003cstrong\u003eBody\u003c/strong\u003e\u003cul\u003e\u003cli\u003eBody type: Classical\u003c/li\u003e\u003cli\u003eCutaway: No\u003c/li\u003e\u003cli\u003eTop wood: Solid Cedar  \u003c/li\u003e\u003cli\u003eBack \u0026amp; sides: Mahogany\u003c/li\u003e\u003cli\u003eBracing pattern: Fan \u003c/li\u003e\u003cli\u003eBody finish: Open Pore\u003c/li\u003e\u003c/ul\u003e\u003cstrong\u003eNeck\u003c/strong\u003e\u003cul\u003e\u003cli\u003eNeck shape: U\u003c/li\u003e\u003cli\u003eNut width: 52mm\u003c/li\u003e\u003cli\u003eFingerboard: Rosewood\u003c/li\u003e\u003cli\u003eNeck wood: Mahogany\u003c/li\u003e\u003cli\u003eScale length: 25 in.\u003c/li\u003e\u003cli\u003eNumber of frets: 18\u003c/li\u003e\u003cli\u003eNeck finish: Open Pore Natural \u003c/li\u003e\u003c/ul\u003e\u003cstrong\u003eElectronics \u003c/strong\u003e\u003cul\u003e\u003cli\u003ePickup/preamp: No\u003c/li\u003e\u003cli\u003eBrand: Not applicable\u003c/li\u003e\u003cli\u003eConfiguration: Not applicable\u003c/li\u003e\u003cli\u003ePreamp EQ:  Not applicable\u003c/li\u003e\u003cli\u003eFeedback filter: Not applicable\u003c/li\u003e\u003cli\u003eTuner: Not applicable\u003c/li\u003e\u003c/ul\u003e\u003cstrong\u003eOther\u003c/strong\u003e\u003cul\u003e\u003cli\u003eHeadstock overlay: Mahogany\u003c/li\u003e\u003cli\u003eTuning machines: Chrome\u003c/li\u003e\u003cli\u003eBridge: Rosewood\u003c/li\u003e\u003cli\u003eSaddle \u0026amp; nut: Plastic\u003c/li\u003e\u003cli\u003eNumber of strings: 6 \u003c/li\u003e\u003cli\u003eSpecial features: D’Addario EXP Strings \u003c/li\u003e\u003cli\u003eCase: Gig bag\u003c/li\u003e\u003cli\u003eAccessories: N/A\u003c/li\u003e\u003cli\u003eCountry of origin: Spain\u003c/li\u003e\u003c/ul\u003e
+* Body type: Classical
+* Cutaway: No
+* Top wood: Solid Cedar
+* Back \u0026amp; sides: Mahogany
+* Bracing pattern: Fan
+* Body finish: Open Pore
+* Neck shape: U
+* Nut width: 52mm
+* Fingerboard: Rosewood
+* Neck wood: Mahogany
+* Scale length: 25 in.
+* Number of frets: 18
+* Neck finish: Open Pore Natural
+* Pickup/preamp: No
+* Brand: Not applicable
+* Configuration: Not applicable
+* Preamp EQ:  Not applicable
+* Feedback filter: Not applicable
+* Tuner: Not applicable
+* Headstock overlay: Mahogany
+* Tuning machines: Chrome
+* Bridge: Rosewood
+* Saddle \u0026amp; nut: Plastic
+* Number of strings: 6
+* Special features: D’Addario EXP Strings
+* Case: Gig bag
+* Accessories: N/A
+* Country of origin: Spain
+
+
+Alhambra/1OP-CW-Classical-Acoustic-Electric-Guitar-Natural-1500000011999
+\u003cstrong\u003eBody\u003c/strong\u003e\u003cul\u003e\u003cli\u003eBody type: Classical\u003c/li\u003e\u003cli\u003eCutaway: Single\u003c/li\u003e\u003cli\u003eTop wood: Solid Cedar\u0026nbsp;\u0026nbsp;\u003c/li\u003e\u003cli\u003eBack \u0026amp; sides: Mahogany\u003c/li\u003e\u003cli\u003eBracing pattern: Fan\u0026nbsp;\u003c/li\u003e\u003cli\u003eBody finish: Open Pore\u003c/li\u003e\u003c/ul\u003e\u003cstrong\u003eNeck\u003c/strong\u003e\u003cul\u003e\u003cli\u003eNeck shape: U\u003c/li\u003e\u003cli\u003eNut width: 52 mm\u003c/li\u003e\u003cli\u003eFingerboard: Rosewood\u003c/li\u003e\u003cli\u003eNeck wood: Mahogany\u003c/li\u003e\u003cli\u003eScale length: 25\u0026quot;\u003c/li\u003e\u003cli\u003eNumber of frets: 18\u003c/li\u003e\u003cli\u003eNeck finish: Open Pore Natural\u0026nbsp;\u003c/li\u003e\u003c/ul\u003e\u003cstrong\u003eElectronics\u0026nbsp;\u003c/strong\u003e\u003cul\u003e\u003cli\u003ePickup/preamp: Yes\u003c/li\u003e\u003cli\u003eBrand: Fishman\u003c/li\u003e\u003cli\u003eConfiguration: Undersaddle pickup\u003c/li\u003e\u003cli\u003ePreamp EQ: 2-band\u003c/li\u003e\u003cli\u003eFeedback filter: Phase\u003c/li\u003e\u003cli\u003eTuner: Tuner\u003c/li\u003e\u003c/ul\u003e\u003cstrong\u003eOther\u003c/strong\u003e\u003cul\u003e\u003cli\u003eHeadstock overlay: Mahogany\u003c/li\u003e\u003cli\u003eTuning machines: Chrome\u003c/li\u003e\u003cli\u003eBridge: Rosewood\u003c/li\u003e\u003cli\u003eSaddle \u0026amp; nut: Plastic\u003c/li\u003e\u003cli\u003eNumber of strings: 6\u0026nbsp;\u003c/li\u003e\u003cli\u003eSpecial features: D’Addario EXP Strings\u0026nbsp;\u003c/li\u003e\u003cli\u003eCase: Gig bag\u003c/li\u003e\u003cli\u003eAccessories: N/A\u003c/li\u003e\u003cli\u003eCountry of origin: Spain\u003c/li\u003e\u003c/ul\u003e
+* Body type: Classical
+* Cutaway: Single
+* Top wood: Solid Cedar\u0026nbsp;\u0026nbsp;
+* Back \u0026amp; sides: Mahogany
+* Bracing pattern: Fan\u0026nbsp;
+* Body finish: Open Pore
+* Neck shape: U
+* Nut width: 52 mm
+* Fingerboard: Rosewood
+* Neck wood: Mahogany
+* Scale length: 25\u0026quot;
+* Number of frets: 18
+* Neck finish: Open Pore Natural\u0026nbsp;
+* Pickup/preamp: Yes
+* Brand: Fishman
+* Configuration: Undersaddle pickup
+* Preamp EQ: 2-band
+* Feedback filter: Phase
+* Tuner: Tuner
+* Headstock overlay: Mahogany
+* Tuning machines: Chrome
+* Bridge: Rosewood
+* Saddle \u0026amp; nut: Plastic
+* Number of strings: 6\u0026nbsp;
+* Special features: D’Addario EXP Strings\u0026nbsp;
+* Case: Gig bag
+* Accessories: N/A
+* Country of origin: Spain
+
+
+Alhambra/5-P-CT-Classical-Acoustic-Electric-Guitar-Gloss-Natural-1500000012021
+\u003cli\u003eBody\t\t\t\u003c/li\u003e\u003cli\u003e\tBody type:\tClassical\t\u003c/li\u003e\u003cli\u003e\tCutaway:\tSingle\t\u003c/li\u003e\u003cli\u003e\tTop wood:\tSolid\tCedar\u003c/li\u003e\u003cli\u003e\tBack \u0026amp; sides:\tRosewood\t\u003c/li\u003e\u003cli\u003e\tBracing pattern:\tFan\t\u003c/li\u003e\u003cli\u003e\tBody finish:\tNatural\tGloss\u003c/li\u003e\u003cli\u003e\tOrientation:\tRight handed\t\u003c/li\u003e\u003cstrong\u003eNeck\t\t\t\u003c/strong\u003e\u003cul\u003e\u003cli\u003e\tNeck shape:\tU\t\u003c/li\u003e\u003cli\u003e\tNut width:\t2.04 in. (52 mm)\t\u003c/li\u003e\u003cli\u003e\tFingerboard:\tEbony\t\u003c/li\u003e\u003cli\u003e\tNeck wood:\tMahogany\t\u003c/li\u003e\u003cli\u003e\tScale length:\t25 in.\t\u003c/li\u003e\u003cli\u003e\tNumber of frets:\t18\t\u003c/li\u003e\u003cli\u003e\tNeck finish:\tNatural\tGloss\u003c/li\u003e\u003c/ul\u003e\u003cstrong\u003eElectronics\u003c/strong\u003e\u003cul\u003e\u003cli\u003e\t\t\t\tPickup/preamp:\tYes\t\u003c/li\u003e\u003cli\u003e\tBrand:\tFishman\t\u003c/li\u003e\u003cli\u003e\tConfiguration:\tUndersaddle pickup\t\u003c/li\u003e\u003cli\u003e\tPreamp EQ:\t3-band\t\u003c/li\u003e\u003cli\u003e\tFeedback filter:\tPhase\t\u003c/li\u003e\u003cli\u003e\tTuner:\tYes\t\u003c/li\u003e\u003c/ul\u003e\u003cstrong\u003eOther\u003c/strong\u003e\u003cul\u003e\u003cli\u003e\t\t\t\tHeadstock overlay:\tMahogany\t\u003c/li\u003e\u003cli\u003e\tTuning machines:\tGold\t\u003c/li\u003e\u003cli\u003e\tBridge:\tRosewood\t\u003c/li\u003e\u003cli\u003e\tSaddle \u0026amp; nut:\tPlastic\t\u003c/li\u003e\u003cli\u003e\tNumber of strings:\t6-string\t\u003c/li\u003e\u003cli\u003e\tSpecial features:\tNone\t\u003c/li\u003e\u003cli\u003e\tCase:\tGig Bag\t\u003c/li\u003e\u003cli\u003e\tAccessories:\tNone\t\u003c/li\u003e\u003cli\u003e\tCountry of origin:\tSpain\u003c/li\u003e\u003c/ul\u003e
+* Body
+* Body type: Classical
+* Cutaway: Single
+* Top wood: Solid Cedar
+* Back \u0026amp; sides: Rosewood
+* Bracing pattern: Fan
+* Body finish: Natural Gloss
+* Orientation: Right handed
+* Neck shape: U
+* Nut width: 2.04 in. (52 mm)
+* Fingerboard: Ebony
+* Neck wood: Mahogany
+* Scale length: 25 in.
+* Number of frets: 18
+* Neck finish: Natural Gloss
+* Pickup/preamp: Yes
+* Brand: Fishman
+* Configuration: Undersaddle pickup
+* Preamp EQ: 3-band
+* Feedback filter: Phase
+* Tuner: Yes
+* Headstock overlay: Mahogany
+* Tuning machines: Gold
+* Bridge: Rosewood
+* Saddle \u0026amp; nut: Plastic
+* Number of strings: 6-string
+* Special features: None
+* Case: Gig Bag
+* Accessories: None
+* Country of origin: Spain
+
+

@@ -11,7 +11,14 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
+# Data directories containing all of the scraped html pages
 GuitarCenter/product_pages_full
 GuitarCenter/browsing_pages
+
+
+# Python data
+*.pkl
+
+
+# Stuff from vim
+*~

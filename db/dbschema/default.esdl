@@ -2,30 +2,59 @@ module default {
   type Guitar {
     required property type -> str;
     required property model -> str;
-    
-    property body_shape -> str;
-    property pickups -> str;
-    property no_strings -> int32;
-    property scale_length -> float64;
 
+    # properties about the guitar 
+    property body_shape -> str;
+    property cutaway -> str;
+    property pickups -> str;
+    property num_strings -> int32;
+    property scale_length -> float64;
+    property num_frets -> int32;
+    property country_of_origin -> str;
+    property description -> json;
+
+    # links to other types
     multi link ratings -> Review;
-    
     link brand -> Manufacturer;
     multi link seller -> Vendor;
   }
 
   type Review {
     property normalized_rating -> float64; # value 0-1, so that it's consistent across platforms
-    property written_review -> json; 
+    property date -> datetime;  # when did we get the review?
+
+    property pros -> json; # pros
+    property cons -> json; # cons
+    property best_for -> json; # what is the guitar best for?
+
+    link source -> ReviewSource; # guitarCenter, GuitarWorld, other?
+
+    property written_review -> json; # full written review, if applicable. For later NLP
   }
 
   type Manufacturer {
-    required property name -> str;
+    required property name -> str; # who makes it?
   }
 
   type Vendor {
-    required property name -> str;
+    required property name -> str; # who sells it? Probably only going to be populated for GC
   }
 
+  type Reviewer { # this way we can see how they review different guitars
+    required property name -> str;
+
+    multi link review -> Review; # link to their reviews
+    multi link source -> ReviewSource; # where were they reviewing? Unlikely we can link across platforms, but...
+  }
+
+
+  type ReviewSource {
+    required property name -> str; # GuitarCenter, GuitarWorld
+    
+    property sourceType -> SourceType; # Vendor or 
+  }
+
+  # define acceptable source types -- vendor or independent
+  scalar type SourceType extending enum<Vendor, Independent>
 
 }

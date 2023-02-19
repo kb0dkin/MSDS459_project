@@ -5,6 +5,8 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 from bs4 import BeautifulSoup
 import re
+import class_definitions
+import datetime
 
 
 
@@ -68,3 +70,49 @@ def gc_get_all_reviews(driver:webdriver, url:str):
             break
     
     return driver.page_source
+
+
+# parse the raw reviews from the html
+def gc_extract_review_info(html) -> list :
+
+    # pull out the reviews and separate them into a list
+    pattern = r'<div class="pr-rd-star-rating">.*?</p></section>'
+    snippets = re.findall(pattern, html, re.DOTALL)
+    
+    reviews = []
+    
+    # parse through each review
+    for snippet in snippets:
+        # normalized review -- to standardize across platforms
+        rating = float(re.search(r'Rated (\d+) out of 5 stars', snippet).group(1))/5
+        title = re.search(r'id="pr-rd-review-headline-.*?" lang="en">(.*?)<', snippet).group(1)
+        author = re.search(r'<p class="pr-rd-details pr-rd-author-nickname">.*?By.*?</span><span>(.*?)</span>', snippet).group(1)
+        date = datetime.datetime.fromisoformat(re.search(r'<time datetime="(.*?)">', snippet).group(1))
+        text = re.search(r'<p class="pr-rd-description-text" lang="en">(.*?)</p>', snippet)
+        if text:
+            text = text.group(1)
+        else:
+            text = ""
+
+        # pros and cons
+        pros_list = re.findall(r'Pros</dt>(.*?)</dl>',snippet, re.DOTALL)
+        pros_list = [re.findall(r'<dd>(.*?)</dd>', pro) for pro in pros_list]
+        pros_list = [item for sublist in pros_list for item in sublist]
+
+        cons_list = re.findall(r'Cons</dt>(.*?)</dl>',snippet, re.DOTALL)
+        cons_list = [re.findall(r'<dd>(.*?)</dd>', pro) for pro in cons_list]
+        cons_list = [item for sublist in cons_list for item in sublist]
+
+        # best_for 
+        best_for_list = re.findall(r'Best for</dt>(.*?)</dl>', snippet, re.DOTALL)
+        best_for_list = [re.findall(r'<dd>(.*?)</dd>', best) for best in best_for_list]
+        best_for_list = [item for sublist in best_for_list for item in sublist]
+
+        review = class_definitions.Review(rating, title, text, author, date, pros_list, cons_list, best_for_list)
+        reviews.append(review)
+
+    # return as a list
+    return reviews
+
+
+def gc_extract_guitar_info(snippets):

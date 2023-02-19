@@ -8,15 +8,14 @@
 
 
 from selenium import webdriver
-import time
+# import time
 from bs4 import BeautifulSoup
-import os
+# import os
+import edgedb
 
 # local import
 import scrape_utils
 import class_definitions
-
-
 
 
 # create new instance of firefox driver -- this should be the geckodriver
@@ -26,7 +25,8 @@ driver = webdriver.Firefox()
 # start with guitarcenter
 # ---------------------------------------------------
 
-url_list = [] # 
+url_list = [] #  list of guitar urls
+guitars = [] # list of guitars
 # iterate over the range of "Nao" values, get links to all guitars
 for ii in range(0, 4400, 100):
     html = scrape_utils.gc_get_browsing_pages(driver, ii) # get the html doc
@@ -40,7 +40,9 @@ url_list = list(set(url_list)) # get rid of any repeats
 for url in url_list:
     # get the entire review set for this page
     html = scrape_utils.gc_get_all_reviews(driver, url)
+    reviews = scrape_utils.gc_extract_review_info(html)
 
+    guitar = scrape_utils.parse_guitars(url, html)
 
 
 

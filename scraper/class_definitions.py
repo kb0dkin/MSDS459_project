@@ -1,6 +1,6 @@
 # Make a Review class that has attributes "name", "location", "title", "text", "rating", "pros", "cons" and "best_for"
 class Review:
-    def __init__(self, rating, title, text, author, date, pros, cons, best_for):
+    def __init__(self, rating:float, title:str, text:str, author:str, date:time.datetime, pros, cons, best_for):
         self.rating = rating
         self.title = title
         self.text = text

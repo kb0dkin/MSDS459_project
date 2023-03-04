@@ -42,13 +42,13 @@ def gc_extract_links(html):
         if match:
             matches.append(match.group())
 
-
     return matches
+
 
 
 # repeatedly click the "show more reviews" button until we have all visible
 def gc_get_all_reviews(driver:webdriver, url:str):
-    driver.get(url) # load the page
+    driver.get("https://guitarcenter.com/"+url) # load the page
 
     # repeat until we can't
     while True:
@@ -87,7 +87,7 @@ def gc_extract_review_info(html) -> list :
         rating = float(re.search(r'Rated (\d+) out of 5 stars', snippet).group(1))/5
         title = re.search(r'id="pr-rd-review-headline-.*?" lang="en">(.*?)<', snippet).group(1)
         author = re.search(r'<p class="pr-rd-details pr-rd-author-nickname">.*?By.*?</span><span>(.*?)</span>', snippet).group(1)
-        date = datetime.datetime.fromisoformat(re.search(r'<time datetime="(.*?)">', snippet).group(1))
+        date = datetime.datetime.strptime(re.search(r'<time datetime="(.*?)">', snippet).group(1)[:-5], '%Y-%m-%dT%H:%M:%S').astimezone()
         text = re.search(r'<p class="pr-rd-description-text" lang="en">(.*?)</p>', snippet)
         if text:
             text = text.group(1)
@@ -115,4 +115,104 @@ def gc_extract_review_info(html) -> list :
     return reviews
 
 
-def gc_extract_guitar_info(snippets):
+# parse all of the desired spec info for the guitars from the html
+def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
+
+    # make and model
+    match = re.search(r'"og:title" content="([^"]+)"', html)
+    if match is None:
+        model = ""
+    else:
+        model = match.group(1).replace("&nbsp;"," ")
+    
+    # get description, which is the string following '"PDPDescription":{"description"'
+    match = re.search(r'"PDPDescription":{"description":"([^"]+)"', html)
+    if match is None:
+        description = ""
+    else:
+        description = match.group(1)
+    description = description_clean(description)
+    
+
+    # get features, which is the string following "features"
+    match = re.search(r'"features":"([^"]+)"', html)
+    if match is None:
+        features_raw = ""
+    else:
+        features_raw = match.group(1)
+    feature_list = fix_features(extract_strings(features_raw))
+    feature_dict = feature_list_to_dict(feature_list) # convert to a dict
+
+    guitar = class_definitions.Guitar(model=model, description=description, features=feature_list)
+    guitar = feat_dict_into_guitar(guitar=guitar, feat_dict=feature_dict)
+
+    return guitar
+
+
+
+
+# Reads the strings between the specified tags
+def extract_strings(str):
+    str = str.replace("\\\\", "\\")
+    extracted_string = re.findall(r'li\\u003e(.*?)\\u003c/li', str)
+    return extracted_string
+
+# Fixes anomalies in the features strings
+def fix_features(str_list):
+    for i in range(len(str_list)):
+        str_list[i] = str_list[i].replace("\\t", " ")
+        str_list[i] = str_list[i].replace("\\n", " ")
+        # Remove any space at beginning or end of each string
+        str_list[i] = str_list[i].strip()
+    return str_list
+
+# split features into a dictionary to allow for easy loading into the guitar class
+def feature_list_to_dict(feat_list:list) -> dict:
+    # iterate through list, create a dict
+    feat_dict = {item.split(': ')[0]:item.split(': ')[1] for item in feat_list if len(item.split(': ')) == 2}
+    return feat_dict
+
+
+# clean up junk from the description
+def description_clean(description:str) -> str:
+    replace_list = ["\\u003cstyle",\
+                    "\\u003c/style",\
+                    "\\u003cbr",\
+                    "\\u003e",\
+                    "\\u0026nbsp",\
+                    " /",\
+                    "\\u003cp",\
+                    "\\u003c",\
+                    "div id=\\",\
+                    "style\\u003e ",\
+                    "/p"]
+    
+    for item in replace_list:
+        description = description.replace(item, "")
+    
+    return description
+
+
+# get rid of non-numeric characters, return an int (for fret num, string num etc)
+def strip_alpha(base_str:str) -> int:
+    return re.sub('[^0-9]','',base_str)
+
+def feat_dict_into_guitar(guitar:class_definitions.Guitar,feat_dict:dict) -> class_definitions.Guitar:
+
+    for key,value in feat_dict.items():
+        if key == 'Body type':
+            guitar.body_shape = value
+        if key == 'Cutaway':
+            guitar.cutaway = value
+        if key == 'Pickup/preamp':
+            guitar.pickups = value
+        if key == 'Number of frets':
+            guitar.num_frets = strip_alpha(value)
+        if key == 'Number of strings':
+            guitar.num_strings = strip_alpha(value)
+        if key == 'Scale length':
+            guitar.scale_length = strip_alpha(value)
+    
+    return guitar
+
+

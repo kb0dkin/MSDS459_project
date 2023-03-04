@@ -1,6 +1,6 @@
 # Make a Review class that has attributes "name", "location", "title", "text", "rating", "pros", "cons" and "best_for"
 class Review:
-    def __init__(self, rating:float, title:str, text:str, author:str, date:time.datetime, pros, cons, best_for):
+    def __init__(self, rating:float, title:str, text:str, author:str, date, pros:list, cons:list, best_for:list):
         self.rating = rating
         self.title = title
         self.text = text
@@ -11,26 +11,28 @@ class Review:
         self.best_for = best_for
 
     def __str__(self):
-        return f"{self.title} by {self.author}:{self.rating}/5\n {self.text}"
+        return f"{self.title} by {self.author}:{self.rating}\n {self.text}"
 
 # Make a Guitar class that has attributes "model", "rating", "num_ratings", "price", "description", "item_num", "pos_num",
 # "features", "specs", "warranty", "reviews" and "url"
 class Guitar:
-    def __init__(self, model, rating, num_ratings, price, description, item_num, pos_num, features, specs, reviews, pros, cons, best_for, makeAndModelStr):
+    def __init__(self, model:str = None, description = None, features = None, specs = None,\
+                body_shape:str = None, cutaway:str = None, pickups:str = None,\
+                num_strings:int = None, scale_length:float = None, num_frets:int = None,\
+                country_of_origin:str = None):
+        
+        # fill everything out
         self.model = model #
-        self.rating = rating #
-        self.num_ratings = num_ratings #
-        self.price = price #
         self.description = description #
-        self.item_num = item_num #
-        self.pos_num = pos_num #
         self.features = features #
+        self.body_shape = body_shape
+        self.cutaway = cutaway
+        self.pickups = pickups
+        self.num_strings = num_strings
+        self.scale_length = scale_length
+        self.num_frets = num_frets
+        self.country_of_origin = country_of_origin
         self.specs = specs #
-        self.reviews = reviews #
-        self.pros = pros #
-        self.cons = cons #
-        self.best_for = best_for #
-        self.url = makeAndModelStr #
 
     def __str__(self):
-        return f"{self.model}, {self.rating}, {self.num_ratings}, {self.price}, {self.description}, {self.item_num}, {self.pos_num}, {self.features}, {self.specs}, {self.reviews}, {self.url}"
+        return f"{self.model}, {self.description}, {self.features}, {self.specs}"

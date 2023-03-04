@@ -23,7 +23,7 @@ module default {
     property normalized_rating -> float64; # value 0-1, so that it's consistent across platforms
     property date -> datetime;  # when did we get the review?
 
-    property pros -> json; # pros
+    property pros -> ; # pros
     property cons -> json; # cons
     property best_for -> json; # what is the guitar best for?
 

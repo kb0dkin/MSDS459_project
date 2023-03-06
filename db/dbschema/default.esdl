@@ -11,10 +11,10 @@ module default {
     property scale_length -> float64;
     property num_frets -> int32;
     property country_of_origin -> str;
-    property description -> json;
+    property description -> str;
 
     # links to other types
-    multi link ratings -> Review;
+    # multi link ratings -> Review;
     link brand -> Manufacturer;
     multi link seller -> Vendor;
   }
@@ -23,13 +23,14 @@ module default {
     property normalized_rating -> float64; # value 0-1, so that it's consistent across platforms
     property date -> datetime;  # when did we get the review?
 
-    property pros -> ; # pros
-    property cons -> json; # cons
-    property best_for -> json; # what is the guitar best for?
+    property pros -> array<str>; # pros
+    property cons -> array<str>; # cons
+    property best_for -> array<str>; # what is the guitar best for?
 
+    link guitar -> Guitar; # link it to a single guitar
     link source -> ReviewSource; # guitarCenter, GuitarWorld, other?
 
-    property written_review -> json; # full written review, if applicable. For later NLP
+    property written_review -> str; # full written review, if applicable. For later NLP
   }
 
   type Manufacturer {
@@ -51,7 +52,7 @@ module default {
   type ReviewSource {
     required property name -> str; # GuitarCenter, GuitarWorld
     
-    property sourceType -> SourceType; # Vendor or 
+    property sourceType -> SourceType; # Vendor or Independent (magazine etc)
   }
 
   # define acceptable source types -- vendor or independent

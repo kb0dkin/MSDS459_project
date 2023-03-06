@@ -1,3 +1,6 @@
+import edgedb
+
+
 # Make a Review class that has attributes "name", "location", "title", "text", "rating", "pros", "cons" and "best_for"
 class Review:
     def __init__(self, rating:float, title:str, text:str, author:str, date, pros:list, cons:list, best_for:list):
@@ -13,7 +16,8 @@ class Review:
     def __str__(self):
         return f"{self.title} by {self.author}:{self.rating}\n {self.text}"
 
-# Make a Guitar class that has attributes "model", "rating", "num_ratings", "price", "description", "item_num", "pos_num",
+# Make a Guitar class that has attributes "model", "rating", "num_ratings", "price", 
+# "description", "item_num", "pos_num",
 # "features", "specs", "warranty", "reviews" and "url"
 class Guitar:
     def __init__(self, model:str = None, description = None, features = None, specs = None,\
@@ -36,3 +40,9 @@ class Guitar:
 
     def __str__(self):
         return f"{self.model}, {self.description}, {self.features}, {self.specs}"
+    
+
+class Manufacturer:
+    def __init__(self, name):
+        self.name = name
+

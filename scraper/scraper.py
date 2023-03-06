@@ -51,36 +51,47 @@ for url_ii, url in enumerate(url_list):
     reviews = scrape_utils.gc_extract_review_info(html) # parse the review info
     guitar = scrape_utils.gc_extract_guitar_info(url, html) # parse the specs for the guitar
 
+    
+    # *todo* -- enable entity linking!        
+    g_id = client.query("""
+        INSERT Guitar {
+            model := <str>$model,
+            type := <str>$g_type,
+            body_shape := <str>$body_shape,
+            cutaway := <str>$cutaway,
+            num_strings := <int32>$num_strings,
+            scale_length := <float64>$scale_length,
+            num_frets := <int32>$num_frets,
+            description := $description
+        }
+    """, model=guitar.model, body_shape = guitar.body_shape, cutaway = guitar.cutaway,\
+        num_strings = guitar.num_strings, scale_length = guitar.scale_length,\
+        num_frets = guitar.num_frets, description = guitar.description, g_type = "guitar")
+    
     # Review insertions
-    review_uuid = []
     for review in reviews:
         review_set = client.query("""
             INSERT Review {
                 normalized_rating:= <float64>$rating,
                 date:= <std::datetime>$date,
-                pros := <json>$pros,
-                cons := <json>$cons,
-                best_for := <json>$best_for
+                pros := <array<str>>$pros,
+                cons := <array<str>>$cons,
+                best_for := <array<str>>$best_for,
+                guitar := $guitar,
+                written_review -> $text,
             }
         """,\
             rating=review.rating, date=review.date,\
-            pros=json.dumps(review.pros), cons=json.dumps(review.cons), best_for= json.dumps(review.best_for))
-
-        ## *todo* -- enable entity linking!        
-        # client.query("""
-        #     INSERT Guitar {
-        #         model := <str>$model,
-        #         type := <str>$g_type,
-        #         body_shape := <str>$body_shape,
-        #         cutaway := <str>$cutaway,
-        #         num_strings := <int32>$num_strings,
-        #         scale_length := <float64>$scale_length,
-        #         num_frets := <int32>$num_frets,
-        #         description := <json>$description
-        #     }
-        # """, model=guitar.model, body_shape = guitar.body_shape, cutaway = guitar.cutaway,\
-        #     num_strings = guitar.num_strings, scale_length = guitar.scale_length,\
-        #     num_frets = guitar.num_frets, description = guitar.description, g_type = "guitar")
+            pros=review.pros, cons=review.cons,\
+            best_for= review.best_for, guitar=g_id,\
+            text = review.text)
+        
+        author_set = client.query("""
+            SELECT Reviewer FILTER Reviewer.review.id = $review_id
+        """, review_id = review_set[0])
+        
+        
+    
 
 
 

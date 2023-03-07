@@ -3,7 +3,7 @@ import edgedb
 
 # Make a Review class that has attributes "name", "location", "title", "text", "rating", "pros", "cons" and "best_for"
 class Review:
-    def __init__(self, rating:float, title:str, text:str, author:str, date, pros:list, cons:list, best_for:list):
+    def __init__(self, rating:float, title:str, text:str, author:str, date, pros:list, cons:list, best_for:list, review_source:str = 'Guitar Center'):
         self.rating = rating
         self.title = title
         self.text = text
@@ -12,6 +12,7 @@ class Review:
         self.pros = pros
         self.cons = cons
         self.best_for = best_for
+        self.review_source = review_source
 
     def __str__(self):
         return f"{self.title} by {self.author}:{self.rating}\n {self.text}"
@@ -22,12 +23,12 @@ class Review:
         # initialize the setup
         # query_str = 'INSERT review { '
        
-        rating = self.rating if  not None else []
-        rev_date = self.date if  not None else []
-        pros = self.pros if len(self.pros) > 0 else []
-        cons = self.cons if len(self.cons) > 0 else []
-        best_for = self.best_for if len(self.best_for) > 0 else []
-        text = self.text if not None else []
+        rating = self.rating if self.rating is not None else float()
+        rev_date = self.date if self.date is not None else str()
+        pros = self.pros if len(self.pros) > 0 else edgedb.Set()
+        cons = self.cons if len(self.cons) > 0 else edgedb.Set()
+        best_for = self.best_for if len(self.best_for) > 0 else edgedb.Set()
+        text = self.text if self.text is not None else str()
 
         query_str = """INSERT Review {
                         normalized_rating := <float64>$rating,
@@ -39,41 +40,42 @@ class Review:
                         guitar := (
                             SELECT Guitar
                             filter .id = <uuid>$guitar_id
-                            )
+                            ),
+                        source :=(
+                            SELECT ReviewSource
+                            filter .name = <str>$review_source
+                        ),
                         }
                         """
-        client.query(query_str, rating=rating, rev_date=rev_date, pros=pros,\
-                     cons = cons, best_for = best_for, text = text, guitar_id = guitar_id)
-
-        # if self.rating is not None:
-            # query_str = query_str + f"normalized_rating: <float64><decimal>{self.rating}, "
-        # if self.date is not None:
-            # query_str = query_str + f"date := <std::datetime>>'{self.date}', "
-        # if self.pros is not None:
-        #     query_str = query_str + f"pros := <array<str>>{self.pros}, "
-        # if self.cons is not None:
-        #     query_str = query_str + f"cons := <array<str>>{self.cons}, "
-        # if self.best_for is not None:
-        #     query_str = query_str + f"best_for := <array<str>>{self.best_for}, "
-        # if self.text is not None:
-        #     query_str = query_str + f"written_review := <str>'{self.text}', "
+        return_val = client.query(query_str, rating=rating, rev_date=rev_date, pros=pros,\
+                            cons = cons, best_for = best_for, text = text, guitar_id = guitar_id,\
+                            review_source = self.review_source)
         
-        # # link the guitar
-        # query_str = query_str + f"""
-        #                         guitar := (
-        #                             SELECT Guitar
-        #                             filter
-        #                                 .id = <uuid>{guitar_id}
-        #                         )
-        #                         """
+        # insert or update the reviewer 
+        query_str = """INSERT Reviewer {
+                        name := <str>$name,
+                        review := (
+                            SELECT Review
+                            filter .id = <uuid>$review_id
+                        ),
+                        source := (
+                            SELECT ReviewSource
+                            filter .name = <str>$review_source
+                        )
+                    } UNLESS CONFLICT on .name
+                    ELSE (
+                        UPDATE Reviewer SET {
+                            review += (
+                                SELECT Review
+                                filter .id = <uuid>$review_id
+                            )
+                        }
+                    )
+                    """
         
-        # # close it out
-        # query_str = query_str + '}'
-
-        # return client.query(query_str)
-        return query_str
-
-
+        reviewer_val = client.query(query_str, name=self.author, review_id = return_val[0].id, review_source = self.review_source)
+        
+        return return_val[0].id
 
 
 
@@ -109,46 +111,54 @@ class Guitar:
     def keys(self):
         return self.__dict__.keys()
     
-
-    
     # insert into the database
     #   this has to account for null fields by not adding them
     def insert(self, client:edgedb.Client):
-        query_str = "INSERT Guitar {"
+        # query_str = "INSERT Guitar {"
         
-        # there's got to be a better way .gif.... maybe a dictionary?
-        # start with the mandatory stuff
-        query_str = query_str + f"model := <str>'{self.model}', " # model name
-        query_str = query_str + f"type := <str>'{self.guitar_type}', " # guitar type
-        # non-mandatory stuff
-        if self.description is not None:
-            query_str = query_str + f"description := <str>'{self.description}', "
-        if self.body_shape is not None:
-            query_str = query_str + f"body_shape: <str>'{self.body_shape}', "
-        if self.cutaway is not None:
-            query_str = query_str + f"cutaway: <str>'{self.cutaway}', "
-        if self.num_strings is not None:
-            query_str = query_str + f"num_strings := <int32>{self.num_strings}, "
-        if self.scale_length is not None:
-            query_str = query_str + f"scale_length := <float64>{self.scale_length}, "
-        if self.num_frets is not None:
-            query_str = query_str + f"num_frets := <int32>{self.num_frets}, "
+        # # there's got to be a better way .gif.... maybe a dictionary?
+        # # start with the mandatory stuff
+        # query_str = query_str + f"model := <str>'{self.model}', " # model name
+        # query_str = query_str + f"type := <str>'{self.guitar_type}', " # guitar type
 
-        # now for a complicated one -- the manufacturer!
-        if self.manufacturer is not None:
-            query_str = query_str + f""" brand := ( 
-                                        INSERT Manufacturer {{
-                                            name := <str>'{self.manufacturer}'
-                                        }}
-                                        UNLESS CONFLICT ON Manufacturer.name
-                                        ELSE Manufacturer
-                                        )
-                                    """
+        # replace Nones and empty lists with []
+        description = self.description if self.description is not None else str()
+        body_shape = self.body_shape if self.body_shape is not None else str()
+        cutaway = self.cutaway if self.cutaway is not None else str()
+        num_strings = self.num_strings if self.num_strings is not None else int()
+        scale_length = self.scale_length if self.scale_length is not None else float()
+        num_frets = self.num_frets if self.num_frets is not None else int()
 
-        query_str = query_str + "}"
+        # create the query string
+        query_str = """ INSERT Guitar {
+                            model := <str>$model,
+                            type := <str>$guitar_type,
+                            description := <str>$description,
+                            body_shape := <str>$body_shape,
+                            cutaway := <str>$cutaway,
+                            num_strings := <int32>$num_strings,
+                            scale_length := <float64>$scale_length,
+                            num_frets := <int32>$num_frets,
 
-        # return query_str
-        return client.query(query_str)[0].id # return the guitar id
+                            brand := (
+                                INSERT Manufacturer {
+                                    name := <str>$manufacturer
+                                }
+                                UNLESS CONFLICT ON Manufacturer.name
+                                ELSE Manufacturer
+                            ),
+                            seller := (
+                                SELECT Vendor filter .name = 'Guitar Center'
+                            ),
+                        } 
+                        UNLESS CONFLICT ON .model
+                    """
+        resp = client.query(query_str, model=self.model, guitar_type = self.guitar_type, description=description,\
+             body_shape=body_shape, cutaway=cutaway, num_strings=num_strings,\
+             scale_length=scale_length, num_frets=num_frets, manufacturer=self.manufacturer)                      
+
+        return resp[0].id  # id of the inserted guitar
+
 
 
 class Manufacturer:

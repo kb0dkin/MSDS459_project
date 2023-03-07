@@ -48,7 +48,9 @@ module default {
   }
 
   type Reviewer { # this way we can see how they review different guitars
-    required property name -> str;
+    required property name -> str{
+      constraint exclusive;
+    };
 
     multi link review -> Review; # link to their reviews
     multi link source -> ReviewSource; # where were they reviewing? Unlikely we can link across platforms, but...
@@ -57,7 +59,7 @@ module default {
 
   type ReviewSource {
     required property name -> str {
-        constraint exclusive
+        constraint exclusive;
     }; # GuitarCenter, GuitarWorld
     
     property sourceType -> SourceType; # Vendor or Independent (magazine etc)

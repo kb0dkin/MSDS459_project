@@ -131,7 +131,7 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
         match = "" # what is the point of an un-named guitar?
     else:
         model = match.group(1).replace("&nbsp;"," ")
-        model = model.replace(manufacturer,'') # pop out the manufacturer's name
+        model = model.replace(manufacturer,'').lstrip() # pop out the manufacturer's name
     
     # get description, which is the string following '"PDPDescription":{"description"'
     match = re.search(r'"PDPDescription":{"description":"([^"]+)"', html)
@@ -153,15 +153,15 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
 
     # get the type
     guitar_type = 'unknown'
-    if re.search(r'[C|c]lassical',features_raw) is not None:
+    if (re.search(r'[C|c]lassical',features_raw) is not None) or (re.search(r'[C|c]lassical',model) is not None):
         guitar_type = 'Classical'
-    elif re.search(r'[A|a]coustic [E|electric]', features_raw) is not None:
+    elif (re.search(r'[A|a]coustic [E|electric]', features_raw) is not None) or (re.search(r'[A|a]coustic [E|electric]', model) is not None):
         guitar_type = 'Acoustic Electric'
-    elif re.search(r'[A|a]coustic', features_raw) is not None:
+    elif (re.search(r'[A|a]coustic', features_raw) is not None) or (re.search(r'[A|a]coustic', model) is not None):
         guitar_type = 'Acoustic'
-    elif re.search(r'[E|e]lectric', features_raw) is not None:
+    elif (re.search(r'[E|e]lectric', features_raw) is not None) or (re.search(r'[E|e]lectric', model) is not None):
         guitar_type = 'Electric'
-    elif re.search(r'[T|t]ravel', features_raw)  is not None:
+    elif (re.search(r'[T|t]ravel', features_raw)  is not None) or (re.search(r'[T|t]ravel', model)  is not None):
         guitar_type = 'Travel'
 
 

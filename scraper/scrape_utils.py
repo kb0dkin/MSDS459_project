@@ -31,7 +31,7 @@ def gc_get_browsing_pages(driver:webdriver, nao_val:int):
 # return all links that matche the regular expression r'.%\d{13}\.gc$'
 # which is guitar center link format for products
 def gc_extract_links(html):
-    matches = [] # initialize the list of matches
+    matches = [] # initialize the set of matches
 
     soup = BeautifulSoup(html, 'html.parser') # parse the HTML
 
@@ -119,11 +119,19 @@ def gc_extract_review_info(html) -> list :
 def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
 
     # make and model
-    match = re.search(r'"og:title" content="([^"]+)"', html)
+    match = re.search(r'[^/]*[^/]', url)
     if match is None:
-        model = ""
+        manufacturer = None
+    else:
+        manufacturer = match.group(0)
+
+    # model
+    match = re.search(r'"og:title" content="([^"]+)"', html)
+    if match is None: 
+        match = "" # what is the point of an un-named guitar?
     else:
         model = match.group(1).replace("&nbsp;"," ")
+        model = model.replace(manufacturer,'') # pop out the manufacturer's name
     
     # get description, which is the string following '"PDPDescription":{"description"'
     match = re.search(r'"PDPDescription":{"description":"([^"]+)"', html)
@@ -143,8 +151,31 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
     feature_list = fix_features(extract_strings(features_raw))
     feature_dict = feature_list_to_dict(feature_list) # convert to a dict
 
-    guitar = class_definitions.Guitar(model=model, description=description, features=feature_list)
+    # get the type
+    guitar_type = 'unknown'
+    if re.search(r'[C|c]lassical',features_raw) is not None:
+        guitar_type = 'Classical'
+    elif re.search(r'[A|a]coustic [E|electric]', features_raw) is not None:
+        guitar_type = 'Acoustic Electric'
+    elif re.search(r'[A|a]coustic', features_raw) is not None:
+        guitar_type = 'Acoustic'
+    elif re.search(r'[E|e]lectric', features_raw) is not None:
+        guitar_type = 'Electric'
+    elif re.search(r'[T|t]ravel', features_raw)  is not None:
+        guitar_type = 'Travel'
+
+
+
+    guitar = class_definitions.Guitar(model=model, description=description, features=feature_list, guitar_type=guitar_type, manufacturer=manufacturer)
     guitar = feat_dict_into_guitar(guitar=guitar, feat_dict=feature_dict)
+
+    # see if we can fill in the number of strings using a regular expression
+    if guitar.num_strings is None:
+        match = re.search('([0-9]{1,2}) string', features_raw)
+        if match is not None:
+            guitar.num_strings = int(match.group(1)) # set it to # strings
+
+
 
     return guitar
 
@@ -185,7 +216,7 @@ def description_clean(description:str) -> str:
                     "\\u003c",\
                     "div id=\\",\
                     "style\\u003e ",\
-                    "/p"]
+                    "/p","'","\\"]
     
     for item in replace_list:
         description = description.replace(item, "")

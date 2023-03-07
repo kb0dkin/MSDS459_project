@@ -38,63 +38,41 @@ for ii in range(0,100,100): # temp testing
 
     url_list.append(scrape_utils.gc_extract_links(html)) # append the list of matches
 
-url_list = np.unique(url_list).tolist() # get rid of any repeats
+# make it unique -- also have to flatten it
+url_list = list(set([item for sublist in url_list for item in sublist]))
 
 # open an edgedb instance
 
 client = edgedb.create_client(dsn='MSDS_459')
 
+# create a "Guitar Center" vendor and Review Source
+client.query(""" INSERT ReviewSource {
+                    name := <str>'Guitar Center',
+                    sourceType := <default::SourceType>'Vendor',
+            } UNLESS CONFLICT """)
+
+# create a "Guitar Center" vendor
+client.query(""" INSERT Vendor {
+                    name := <str>'Guitar Center',
+            } UNLESS CONFLICT """)
+
+
 # iterate through the urls
 # for url in url_list:
-for url_ii, url in enumerate(url_list):
+# for url_ii, url in enumerate(url_list):
+for url in url_list:
     html = scrape_utils.gc_get_all_reviews(driver, url)  
     reviews = scrape_utils.gc_extract_review_info(html) # parse the review info
     guitar = scrape_utils.gc_extract_guitar_info(url, html) # parse the specs for the guitar
 
+    guitar_id = guitar.insert(client) # insert the guitar, get the uuid
     
-    # *todo* -- enable entity linking!        
-    g_id = client.query("""
-        INSERT Guitar {
-            model := <str>$model,
-            type := <str>$g_type,
-            body_shape := <str>$body_shape,
-            cutaway := <str>$cutaway,
-            num_strings := <int32>$num_strings,
-            scale_length := <float64>$scale_length,
-            num_frets := <int32>$num_frets,
-            description := $description
-        }
-    """, model=guitar.model, body_shape = guitar.body_shape, cutaway = guitar.cutaway,\
-        num_strings = guitar.num_strings, scale_length = guitar.scale_length,\
-        num_frets = guitar.num_frets, description = guitar.description, g_type = "guitar")
-    
-    # Review insertions
     for review in reviews:
-        review_set = client.query("""
-            INSERT Review {
-                normalized_rating:= <float64>$rating,
-                date:= <std::datetime>$date,
-                pros := <array<str>>$pros,
-                cons := <array<str>>$cons,
-                best_for := <array<str>>$best_for,
-                guitar := $guitar,
-                written_review -> $text,
-            }
-        """,\
-            rating=review.rating, date=review.date,\
-            pros=review.pros, cons=review.cons,\
-            best_for= review.best_for, guitar=g_id,\
-            text = review.text)
-        
-        author_set = client.query("""
-            SELECT Reviewer FILTER Reviewer.review.id = $review_id
-        """, review_id = review_set[0])
-        
-        
-    
+        review.insert(guitar_id, client)
 
 
 
 
+# close everything up
 driver.close()
 client.close()

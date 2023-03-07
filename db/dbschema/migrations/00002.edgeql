@@ -1,9 +1,19 @@
-CREATE MIGRATION m16c6fjljahhlxc3qenwdon3524reqwxflqtrgeemxtod3ff4tu4la
-    ONTO m1paghr6vk32ump5knam2ndhivwkzoonegik6fvzbzfe7dxsubypdq
+CREATE MIGRATION m1yuetngveaqtxh5ndnf27y5dzvoubzf5zo7l3q6gxqmhucrhaes4a
+    ONTO m1ljwtoyzk5knu6cu6nnjiuriaxlqvtmwancceapjstnocubyvueza
 {
   ALTER TYPE default::Guitar {
-      ALTER LINK seller {
-          SET MULTI;
+      ALTER PROPERTY model {
+          CREATE CONSTRAINT std::exclusive;
+      };
+  };
+  ALTER TYPE default::Manufacturer {
+      ALTER PROPERTY name {
+          CREATE CONSTRAINT std::exclusive;
+      };
+  };
+  ALTER TYPE default::Vendor {
+      ALTER PROPERTY name {
+          CREATE CONSTRAINT std::exclusive;
       };
   };
 };

@@ -1,7 +1,9 @@
 module default {
   type Guitar {
-    required property type -> str;
-    required property model -> str;
+    required property type -> str; # acoustic, electric, acoustic/electric?
+    required property model -> str {
+        constraint exclusive;
+    };
 
     # properties about the guitar 
     property body_shape -> str;
@@ -34,11 +36,15 @@ module default {
   }
 
   type Manufacturer {
-    required property name -> str; # who makes it?
+    required property name -> str {
+        constraint exclusive;
+    }; # who makes it?
   }
 
   type Vendor {
-    required property name -> str; # who sells it? Probably only going to be populated for GC
+    required property name -> str {
+        constraint exclusive;
+    }; # who sells it? Probably only going to be populated for GC
   }
 
   type Reviewer { # this way we can see how they review different guitars
@@ -50,7 +56,9 @@ module default {
 
 
   type ReviewSource {
-    required property name -> str; # GuitarCenter, GuitarWorld
+    required property name -> str {
+        constraint exclusive
+    }; # GuitarCenter, GuitarWorld
     
     property sourceType -> SourceType; # Vendor or Independent (magazine etc)
   }

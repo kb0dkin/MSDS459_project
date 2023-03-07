@@ -22,6 +22,7 @@ import class_definitions
 
 # create new instance of firefox driver -- this should be the geckodriver
 options = Options()
+options.headless = True
 options.binary_location = r"C:\\Program Files\\Mozilla Firefox\\firefox.exe"
 driver = webdriver.Firefox(executable_path="C:\Program Files\GeckoDriver\geckodriver.exe", options=options)
 
@@ -64,11 +65,15 @@ for url in url_list:
     html = scrape_utils.gc_get_all_reviews(driver, url)  
     reviews = scrape_utils.gc_extract_review_info(html) # parse the review info
     guitar = scrape_utils.gc_extract_guitar_info(url, html) # parse the specs for the guitar
-
-    guitar_id = guitar.insert(client) # insert the guitar, get the uuid
     
-    for review in reviews:
-        review.insert(guitar_id, client)
+    try:
+        guitar_id = guitar.insert(client) # insert the guitar, get the uuid
+    
+        for review in reviews:
+            review.insert(guitar_id, client)
+    
+    except:
+        print(f'Could not insert guitar {guitar.model}')
 
 
 

@@ -1,14 +1,22 @@
 body {
     background-color: rgb(50,50,50);
     color: lightgray;
+    
+}
+
+h1 {
+    color: lightgray;
 }
 
 article {
     margin: 3em;
     border: 2em;
     padding: 2em;
-    background-color: lightgray;
+    background-color: rgba(200,200,200,1);
     color: rgb(50,50,50);
+    align-items: center;
+    place-content: center;
+    border-radius: 5em;
 }
 
 #footer {
@@ -22,5 +30,6 @@ article {
 .PS_button {
     text-align: center;
     padding: .5em;
+    margin: 1em;
     
 }

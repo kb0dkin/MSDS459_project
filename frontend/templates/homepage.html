@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Forms{% endblock %}
+
+{% block content %}
+<article>
+    <form id="PageSelector", name="Page Selector">
+        {% for button_name in button_list %}
+        <button type="submit" class="PS_button" 
+            formaction="{{button_list[button_name]['action']}}"
+            formmethod="post">
+            {{ button_name }}</button>
+        {% endfor %}
+    </form>
+
+</article>
+{% endblock %}

@@ -31,10 +31,10 @@ driver = webdriver.Firefox(executable_path="C:\Program Files\GeckoDriver\geckodr
 # ---------------------------------------------------
 
 url_list = [] #  list of guitar urls
-guitars = [] # list of guitars
 # iterate over the range of "Nao" values, get links to all guitars
-# for ii in range(0, 4400, 100):
-for ii in range(0,100,100): # temp testing
+print("Scraping list of all Guitar Center URLs")
+for ii in range(0,4400,100): # temp testing
+    print('.',end='')
     html = scrape_utils.gc_get_browsing_pages(driver, ii) # get the html doc
 
     url_list.append(scrape_utils.gc_extract_links(html)) # append the list of matches
@@ -61,6 +61,7 @@ client.query(""" INSERT Vendor {
 # iterate through the urls
 # for url in url_list:
 # for url_ii, url in enumerate(url_list):
+print("Scraping individual guitars")
 for url in url_list:
     html = scrape_utils.gc_get_all_reviews(driver, url)  
     reviews = scrape_utils.gc_extract_review_info(html) # parse the review info

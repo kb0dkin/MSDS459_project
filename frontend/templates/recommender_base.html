@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Forms{% endblock %}
+
+{% block content %}
+<article>
+<form>
+    {% for item in text_entries %}
+        <label for="{{ item }}">{{ text_entries[item].label }}:</label>
+        <input type="text" id="form_0_{{ item }}" name="{{ item }}"><br><br>
+    {% endfor %}
+</form></article>
+{% endblock %}

@@ -1,0 +1,26 @@
+body {
+    background-color: rgb(50,50,50);
+    color: lightgray;
+}
+
+article {
+    margin: 3em;
+    border: 2em;
+    padding: 2em;
+    background-color: lightgray;
+    color: rgb(50,50,50);
+}
+
+#footer {
+    flex-grow: 0;
+    flex-shrink: 0;
+    position:absolute;
+    bottom: 0px;
+    padding: 1em;
+}
+
+.PS_button {
+    text-align: center;
+    padding: .5em;
+    
+}

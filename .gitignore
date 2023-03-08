@@ -22,3 +22,7 @@ GuitarCenter/browsing_pages
 
 # Stuff from vim
 *~
+*.swp
+
+# stuff from the gecko driver
+scraper/geckodriver.log

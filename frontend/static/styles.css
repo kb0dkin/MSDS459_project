@@ -1,6 +1,8 @@
 body {
-    background-color: rgb(50,50,50);
+    /* background-color: rgb(50,50,50); */
     color: lightgray;
+    background-image: url('Guitar_Background.png');
+    background-position: center;
     
 }
 
@@ -12,10 +14,11 @@ article {
     margin: 3em;
     border: 2em;
     padding: 2em;
-    background-color: rgba(200,200,200,1);
+    background-color: rgba(200,200,200,.7);
     color: rgb(50,50,50);
-    align-items: center;
-    place-content: center;
+    /* align-items: center; */
+    /* place-content: center; */
+    position: relative;
     border-radius: 5em;
 }
 
@@ -31,5 +34,6 @@ article {
     text-align: center;
     padding: .5em;
     margin: 1em;
+    float: center;
     
 }

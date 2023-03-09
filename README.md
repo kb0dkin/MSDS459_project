@@ -26,10 +26,14 @@ If you prefer pip, I have included a `requirements.txt` file that includes all o
 
 
 ### Populating the database
-First, make sure your EdgeDB instance is running by typing `edgedb instance list` and verify that the `MSDS_459` instance is running.
+First, make sure your EdgeDB instance is running by typing `edgedb instance list` and verify that the `MSDS_459` instance is running. Then, navigate to the `db/` directory and type `python scraper.py`. You can verify that the scraper is running by entering the EdgeDB UI.
+
+Alternatively, I am planning to have a backup of the database that I have populated available online to download and restore into a local instance. We'll see if I get that done in time...
+
+### Using the recommender
 
 Next, navigate to the `frontend/` directory and type `flask run` and open your prefered web browser to *127.0.0.1:5000*
 
-*~Enjoy~*
+*Enjoy*
 
 -KB

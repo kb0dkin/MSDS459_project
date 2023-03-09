@@ -4,6 +4,7 @@ body {
     background-image: url('Guitar_Background.png');
     background-position: center;
     
+    
 }
 
 h1 {
@@ -14,26 +15,27 @@ article {
     margin: 3em;
     border: 2em;
     padding: 2em;
-    background-color: rgba(200,200,200,.7);
+    background-color: rgba(200,200,200,.9);
     color: rgb(50,50,50);
     /* align-items: center; */
     /* place-content: center; */
     position: relative;
-    border-radius: 5em;
+    border-radius: 1em;
 }
 
 #footer {
     flex-grow: 0;
     flex-shrink: 0;
-    position:absolute;
+    position:relative;
     bottom: 0px;
     padding: 1em;
+    background-color: black;
+
 }
 
 .PS_button {
     text-align: center;
     padding: .5em;
     margin: 1em;
-    float: center;
     
 }

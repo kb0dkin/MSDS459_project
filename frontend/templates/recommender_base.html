@@ -3,10 +3,15 @@
 
 {% block content %}
 <article>
-<form>
-    {% for item in text_entries %}
-        <label for="{{ item }}">{{ text_entries[item].label }}:</label>
-        <input type="text" id="form_0_{{ item }}" name="{{ item }}"><br><br>
-    {% endfor %}
-</form></article>
+    <h2>Look for a guitar</h2>
+
+    What type of guitar would you like? Place some data into the form below, and get recommendations
+
+    <br><br>
+    <form action="NLP_request" method="get">
+        <input type="text" id="NLP_request" name="NLP_request"/>
+        <button type="submit" id="NLP_submit" name="NLP_submit">Search</button>
+    </form>
+
+
 {% endblock %}

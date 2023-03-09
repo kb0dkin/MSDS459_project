@@ -1,19 +1,59 @@
 {% extends "base.html" %}
-{% block title %}Forms{% endblock %}
+{% block title %}Landing Page{% endblock %}
 
 {% block content %}
 
 <h1> Guitar Recommender </h1>
 
+<article> 
+    Welcome to the Guitar Recommender, a final project for the 2023 Winter Quarter of MSDS 432.
+
+    <br><br>
+    This program contains records of thousands of guitars scraped from <a href="guitarcenter.com">Guitar Center,</a>
+    an online store for guitars and other musical instruments. If we were to extend this project in the future, we would
+    likely scrape from several more websites to expand our data even further.
+
+    <br><br>
+    This programs requires a local instance of <a href="EdgeDB">EdgeDB</a> to be running. For more information on that process,
+    please view the ReadMe that is available in the base code directory or on the 
+    <a href="github.com/kb0dkin/MSDS459_project">github repository</a>
+
+</article>
+
 <article>
-    <form id="PageSelector", name="Page Selector">
-        {% for button_name in button_list %}
-        <button type="submit" class="PS_button" 
-            formaction="{{button_list[button_name]['action']}}"
-            formmethod="post">
-            {{ button_name }}</button>
-        {% endfor %}
+
+    <h2>Guitar Recommendations</h2>
+
+    Search for your dream guitar! This page allows a user to specify attributes
+    of their guitar, then find matching instruments
+
+    <br><br>
+    <form>
+    <button type="submit" class="PS_button" 
+        formaction="{{ button_list['Recommender']['action'] }}"
+        formmethod="post">
+        Recommender
+    </button>
     </form>
 
 </article>
+
+
+<article>
+
+    Explore the data and look through interesting connections through our data 
+    exploration page!
+
+    <h2>Data Exploration</h2>
+
+    <form>
+    <button type="submit" class="PS_button" 
+        formaction="{{ button_list['DataExploration']['action'] }}"
+        formmethod="post">
+        Data Exploration
+    </button>
+    </form>
+
+</article>
+
 {% endblock %}

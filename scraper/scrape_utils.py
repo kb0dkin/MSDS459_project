@@ -155,7 +155,7 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
     guitar_type = 'unknown'
     if (re.search(r'[C|c]lassical',features_raw) is not None) or (re.search(r'[C|c]lassical',model) is not None):
         guitar_type = 'Classical'
-    elif (re.search(r'[A|a]coustic [E|electric]', features_raw) is not None) or (re.search(r'[A|a]coustic [E|electric]', model) is not None):
+    elif (re.search(r'[A|a]coustic[ |-][E|electric]', features_raw) is not None) or (re.search(r'[A|a]coustic [E|electric]', model) is not None):
         guitar_type = 'Acoustic Electric'
     elif (re.search(r'[A|a]coustic', features_raw) is not None) or (re.search(r'[A|a]coustic', model) is not None):
         guitar_type = 'Acoustic'
@@ -171,7 +171,7 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
 
     # see if we can fill in the number of strings using a regular expression
     if guitar.num_strings is None:
-        match = re.search('([0-9]{1,2}) string', features_raw)
+        match = re.search('([0-9]{1,2})[ |-]string', features_raw)
         if match is not None:
             guitar.num_strings = int(match.group(1)) # set it to # strings
 

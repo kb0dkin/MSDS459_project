@@ -48,7 +48,7 @@ def gc_extract_links(html):
 
 # repeatedly click the "show more reviews" button until we have all visible
 def gc_get_all_reviews(driver:webdriver, url:str):
-    driver.get("https://guitarcenter.com/"+url) # load the page
+    driver.get(url) # load the page
 
     # repeat until we can't
     while True:
@@ -76,7 +76,8 @@ def gc_get_all_reviews(driver:webdriver, url:str):
 def gc_extract_review_info(html) -> list :
 
     # pull out the reviews and separate them into a list
-    pattern = r'<div class="pr-rd-star-rating">.*?</p></section>'
+    # pattern = r'<div class="pr-rd-star-rating">.*?</p></section>' # old pattern - misses pros, cons and best_for
+    pattern = r'<div class="pr-rd-star-rating">.*?<div class="pr-rd-helpful-action">'
     snippets = re.findall(pattern, html, re.DOTALL)
     
     reviews = []
@@ -100,7 +101,7 @@ def gc_extract_review_info(html) -> list :
         pros_list = [item for sublist in pros_list for item in sublist]
 
         cons_list = re.findall(r'Cons</dt>(.*?)</dl>',snippet, re.DOTALL)
-        cons_list = [re.findall(r'<dd>(.*?)</dd>', pro) for pro in cons_list]
+        cons_list = [re.findall(r'<dd>(.*?)</dd>', con) for con in cons_list]
         cons_list = [item for sublist in cons_list for item in sublist]
 
         # best_for 

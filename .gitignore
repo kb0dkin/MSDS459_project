@@ -18,6 +18,7 @@ GuitarCenter/browsing_pages
 
 # Python data
 *.pkl
+*__pycache__
 
 
 # Stuff from vim

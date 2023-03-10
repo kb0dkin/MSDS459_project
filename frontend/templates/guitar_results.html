@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Results{% endblock %}
+
+{% block content %}
+
+{% for guitar in guitars %}
+    <article>
+        <h3>{{ guitars[guitar]['model'] }}</h3>
+        {{ guitars[guitar]['description'] }}
+
+        <form>
+            <button>Find Similar!</button>
+        </form>
+
+    </article>
+
+
+
+
+{% endfor %}
+
+
+{% endblock %}

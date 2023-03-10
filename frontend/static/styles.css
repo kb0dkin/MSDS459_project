@@ -39,3 +39,13 @@ article {
     margin: 1em;
     
 }
+
+.LargeEntry {
+    margin: 1em;
+    padding: 2em;
+    border-color: rgb(50,50,50);
+    min-height: 5ch;
+    align-self: stretch;
+    width: 80%;
+
+}

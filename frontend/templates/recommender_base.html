@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Forms{% endblock %}
+{% block title %}Search{% endblock %}
 
 {% block content %}
 <article>
@@ -8,9 +8,11 @@
     What type of guitar would you like? Place some data into the form below, and get recommendations
 
     <br><br>
-    <form action="NLP_request" method="get">
-        <input type="text" id="NLP_request" name="NLP_request"/>
-        <button type="submit" id="NLP_submit" name="NLP_submit">Search</button>
+    <form method="get">
+        <input type="text" id="KV_request" name="request" class="LargeEntry"/>
+        <br>
+        <button type="submit" id="KV_submit" name="KV_submit" formaction="KV_request">Key/Value Search</button>
+        <button type="submit" id="NLP_submit" name="NLP_submit" formaction="NLP_request">NLP Search</button>
     </form>
 
 

@@ -1,12 +1,15 @@
 from flask import Flask, escape, render_template, request
+from flask import g as gee
 import edgedb
 import bokeh
 import frontend_utils
+import json
 
 app = Flask(__name__)
 
 @app.route("/", methods=['POST','GET'])
 def homepage():
+
     button_list = {'Recommender':{'action':'/Recommender'},\
                    'DataExploration':{'action':'/DataExploration'}}
     return render_template('homepage.html', button_list=button_list)
@@ -19,14 +22,32 @@ def recommender_base():
 
 @app.route("/DataExploration", methods=['POST','GET'])
 def data_exploration():
+
     return "<h1>A work in progress!</h1>"
 
 # parse the string that the person puts in using NER (for now) and
 # then turn it into an edgeql request
+@app.route("/KV_request")
+def kv_request():
+
+    # get data from the database
+    with edgedb.create_client(dsn='MSDS_459') as client:
+        req = dict(request.args)['request']
+        query_str = frontend_utils.request_parser(req)
+        guitars = client.query(query_str)
+
+    # convert to something we can use.
+    guitar_dict = {}
+    for i_guitar,guitar in enumerate(guitars):
+        guitar_dict[i_guitar] = {'model':guitar.model, 'description':guitar.description}
+
+
+    return render_template('guitar_results.html', guitars=guitar_dict)
+
+
 @app.route("/NLP_request")
 def nlp_request():
-    req = dict(request.args)['NLP_request']
-    
-    query_str = frontend_utils.request_parser(req)
+    with edgedb.create_client(dsn="MSDS_459") as client:
+        req = dict(request.args)['request']
 
-    return f"{query_str}"
+    return f"In Progress..."

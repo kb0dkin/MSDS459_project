@@ -197,26 +197,27 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
 
     # get the body shape (called body type in the specs).  Not 100% reliable at this point.
     match = re.search(r"Body Type:\s*(.{40})", specs_raw, re.IGNORECASE)
+    body_shape = "unknown"
     if match is not None:
         match = re.search(r"^\t*(.*?)\\", match.group(1))
         if match is not None:
             body_shape = match.group(1)
-    else:
-        body_shape = "unknown"
 
     # num_frets
     match = re.search(r"Number of frets:\s*(.{5})", specs_raw, re.IGNORECASE)
+    num_frets = None
     if match is not None:
-        num_frets = int(re.findall(r"\d+", match.group(1))[0])
-    else:
-        num_frets = None
+        match = re.findall(r"\d+", match.group(1))
+        if len(match) > 0:
+            num_frets = int(match[0])
 
     # scale_length
     match = re.search(r"Scale length:\s*(.{7})", specs_raw, re.IGNORECASE)
+    scale_length = None
     if match is not None:
-        scale_length = float(re.findall(r"\d*\.\d+", match.group(1))[0])
-    else:
-        scale_length = None
+        match = re.findall(r"\d*\.\d+", match.group(1))
+        if len(match) > 0:
+            scale_length = float(match[0])
 
     # url
     url_full = "https://www.guitarcenter.com" + url

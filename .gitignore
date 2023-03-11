@@ -29,3 +29,6 @@ product_pages_full
 
 # stuff from the gecko driver
 *geckodriver.log
+
+# and edgedb
+db/dbschema/migrations/*

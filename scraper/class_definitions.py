@@ -78,9 +78,8 @@ class Guitar:
                 body_shape:str = None, cutaway:str = None, pickups:str = None,\
                 num_strings:int = None, scale_length:float = None, num_frets:int = None,\
                 country_of_origin:str = None, manufacturer:str = None, guitar_type:str = 'Unknown',\
-                pros:list = None, cons:list = None, best_for:list = None):
-                
-        
+                pros:list = [], cons:list = [], best_for:list = [], url:str = None):
+
         # fill everything out
         self.model = model #
         self.description = description
@@ -98,6 +97,7 @@ class Guitar:
         self.pros = pros
         self.cons = cons
         self.best_for = best_for
+        self.url = url
 
 
     # instantiating string methods
@@ -110,13 +110,9 @@ class Guitar:
     # insert into the database
     #   this has to account for null fields by not adding them
     def insert(self, client:edgedb.Client):
-        # query_str = "INSERT Guitar {"
-        
-        # # there's got to be a better way .gif.... maybe a dictionary?
-        # # start with the mandatory stuff
-        # query_str = query_str + f"model := <str>'{self.model}', " # model name
-        # query_str = query_str + f"type := <str>'{self.guitar_type}', " # guitar type
 
+
+        # # there's got to be a better way .gif.... maybe a dictionary?
         # replace Nones and empty lists with []
         description = self.description if self.description is not None else str()
         body_shape = self.body_shape if self.body_shape is not None else str()
@@ -127,6 +123,7 @@ class Guitar:
         pros = self.pros if len(self.pros) > 0 else edgedb.Set()
         cons = self.cons if len(self.cons) > 0 else edgedb.Set()
         best_for = self.best_for if len(self.best_for) > 0 else edgedb.Set()
+        url = self.url if self.url is not None else str()
 
         # create the query string
         query_str = """ INSERT Guitar {
@@ -138,14 +135,14 @@ class Guitar:
                             num_strings := <int32>$num_strings,
                             scale_length := <float64>$scale_length,
                             num_frets := <int32>$num_frets,
-
                             pros := <array<str>>$pros,
                             cons := <array<str>>$cons,
                             best_for := <array<str>>$best_for,
 
                             brand := (
                                 INSERT Manufacturer {
-                                    name := <str>$manufacturer
+                                    name := <str>$manufacturer,
+                                    url := <str>$url,
                                 }
                                 UNLESS CONFLICT ON Manufacturer.name
                                 ELSE Manufacturer
@@ -159,7 +156,7 @@ class Guitar:
         resp = client.query(query_str, model=self.model, guitar_type = self.guitar_type, description=description,\
             body_shape=body_shape, cutaway=cutaway, num_strings=num_strings,\
             scale_length=scale_length, num_frets=num_frets, manufacturer=self.manufacturer,\
-            pros = pros, cons = cons, best_for=best_for)
+            pros = pros, cons = cons, best_for=best_for, url=url)
 
         return resp[0].id  # id of the inserted guitar
 

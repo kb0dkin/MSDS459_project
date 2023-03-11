@@ -130,13 +130,22 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
     
 
     # get features, which is the string following "features"
-    match = re.search(r'"features":"([^"]+)"', html)
+    # sometimes there are two occurrences, in which case we take the second one (hopefully this works consistently)
+    match = re.findall(r'"features":"([^"]+)"', html)
     if match is None:
         features_raw = ""
     else:
-        features_raw = match.group(1)
+        features_raw = match[-1] # if there are two, take the second one
     feature_list = fix_features(extract_strings(features_raw))
     feature_dict = feature_list_to_dict(feature_list) # convert to a dict
+
+    # get specs, which is the string following "specifications"
+    match = re.search(r'"specifications":"([^"]+)"', html)
+    if match is None:
+        specs_raw = ""
+    else:
+        specs_raw = match.group(1)
+    spec_dict = make_spec_dict(fix_specs(extract_strings(specs_raw)))
 
     # get the type
     guitar_type = 'unknown'
@@ -173,10 +182,49 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
     guitar = feat_dict_into_guitar(guitar=guitar, feat_dict=feature_dict)
 
     # see if we can fill in the number of strings using a regular expression
-    if guitar.num_strings is None:
-        match = re.search('([0-9]{1,2})[ |-]string', features_raw)
+    # Note: this is more complicated than it should be, but hidden characters or something was causing problems
+    # match = re.search(r"Number of strings:\s*(\d+)", specs_raw) # this should work, but sometimes doesn't
+    match = re.search(r"Number of strings:\s*(.{5})", specs_raw, re.IGNORECASE)
+    # print(match)
+    if match is not None:
+        num_strings = int(re.findall(r"\d+", match.group(1))[0])
+    else:
+        match = re.search(r"Number of strings:\s*(.{5})", features_raw, re.IGNORECASE)
         if match is not None:
-            guitar.num_strings = int(match.group(1)) # set it to # strings
+            num_strings = int(re.findall(r"\d+", match.group(1))[0])
+        else:
+            num_strings = None
+
+    # get the body shape (called body type in the specs).  Not 100% reliable at this point.
+    match = re.search(r"Body Type:\s*(.{40})", specs_raw, re.IGNORECASE)
+    if match is not None:
+        body_shape = re.search(r"^\t*(.*?)\\", match.group(1)).group(1)
+    else:
+        body_shape = "unknown"
+
+    # num_frets
+    match = re.search(r"Number of frets:\s*(.{5})", specs_raw, re.IGNORECASE)
+    if match is not None:
+        num_frets = int(re.findall(r"\d+", match.group(1))[0])
+    else:
+        num_frets = None
+
+    # scale_length
+    match = re.search(r"Scale length:\s*(.{7})", specs_raw, re.IGNORECASE)
+    if match is not None:
+        scale_length = float(re.findall(r"\d*\.\d+", match.group(1))[0])
+    else:
+        scale_length = None
+
+    # url
+    url_full = "https://www.guitarcenter.com" + url
+
+    guitar = class_definitions.Guitar(model=model, description=description, features=feature_list,\
+                                      guitar_type=guitar_type, manufacturer=manufacturer, url=url_full,\
+                                      num_strings=num_strings, body_shape=body_shape, num_frets=num_frets,\
+                                      scale_length=scale_length)
+
+    # guitar = feat_dict_into_guitar(guitar=guitar, feat_dict=feature_dict) # redundant?  Need to discuss!
 
 
 
@@ -206,6 +254,29 @@ def feature_list_to_dict(feat_list:list) -> dict:
     feat_dict = {item.split(': ')[0]:item.split(': ')[1] for item in feat_list if len(item.split(': ')) == 2}
     return feat_dict
 
+# Gets the specs from the specs string
+def fix_specs(str_list):
+    # Remove any space at beginning or end of each string
+    # Remove any of the following: "\\u0026amp; ", "\\u0026quot;", "\u0026nbsp;", "\t", "\n"
+    for i in range(len(str_list)):
+        str_list[i] = str_list[i].replace("\\u0026amp; ", "")
+        str_list[i] = str_list[i].replace("\\u0026quot;", "")
+        str_list[i] = str_list[i].replace("\\u0026nbsp;", "")
+        str_list[i] = str_list[i].replace("\\t", " ")
+        str_list[i] = str_list[i].replace("\\n", " ")
+        str_list[i] = str_list[i].strip()
+    return str_list
+
+# Makes a dictionary from the list of strings
+def make_spec_dict(str_list):
+    # Make a dictionary by taking whatever is before the colon as the key and whatever is after as the value
+    spec_dict = {}
+    for i in range(len(str_list)):
+        colon_pos = str_list[i].find(":")
+        key = str_list[i][:colon_pos]
+        value = str_list[i][colon_pos+2:] # +2 instead of +1 to skip the space after the colon
+        spec_dict[key] = value
+    return spec_dict
 
 # clean up junk from the description
 def description_clean(description:str) -> str:

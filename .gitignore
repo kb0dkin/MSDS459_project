@@ -20,7 +20,7 @@ product_pages_full
 
 # Python data
 *.pkl
-*__pycache__
+*__pycache__*
 
 
 # Stuff from vim

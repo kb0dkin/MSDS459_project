@@ -3,17 +3,34 @@
 
 {% block content %}
 <article>
-    <h2>Look for a guitar</h2>
+    <h2>(Musical) Love at First Search</h2>
 
-    What type of guitar would you like? Place some data into the form below, and get recommendations
+    Finding an instrument that fits your needs can be hard.
+    <br><br>
+    Finding one that you love is <i>even harder</i>
+    <br><br>
+
+    <h3>We're here to help.</h3> 
+    
+    Describe your perfect guitar in the form below, and we'll help you look for it! 
+    This system has two options. If you click on "Key/Value Search" the system extracts terms from your
+    description and searches through our database to find a guitar that matches those keywords.
+    
+    <br><br>
+    The second method uses the power of <i>machine learning</i>. We use the <a href="https://arxiv.org/abs/1810.04805">BERT language model</a>
+    to embed your description into a vector representation, then find the guitars that most closely match that description. 
+    
 
     <br><br>
-    <form method="get">
-        <input type="text" id="KV_request" name="request" class="LargeEntry"/>
-        <br>
+    <div class="nested">
+    <form method="get" id="guitar_request">
+        <textarea wrap=soft rows=3 id="KV_request" name="request" class="LargeEntry" form="guitar_request"></textarea>
+        <br><br>
         <button type="submit" id="KV_submit" name="KV_submit" formaction="KV_request">Key/Value Search</button>
         <button type="submit" id="NLP_submit" name="NLP_submit" formaction="NLP_request">NLP Search</button>
     </form>
+    </div>
 
+</article>
 
 {% endblock %}

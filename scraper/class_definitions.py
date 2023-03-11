@@ -3,19 +3,16 @@ import edgedb
 
 # Make a Review class that has attributes "name", "location", "title", "text", "rating", "pros", "cons" and "best_for"
 class Review:
-    def __init__(self, rating:float, title:str, text:str, author:str, date, pros:list, cons:list, best_for:list, review_source:str = 'Guitar Center'):
+    def __init__(self, rating:float, title:str, text:str, author:str, date, review_source:str = 'Guitar Center'):
         self.rating = rating
         self.title = title
         self.text = text
         self.author = author
         self.date = date
-        self.pros = pros
-        self.cons = cons
-        self.best_for = best_for
         self.review_source = review_source
 
     def __str__(self):
-        return f"{self.title} by {self.author}:{self.rating}\n {self.text}"
+        return f"{self.title} by {self.author}:{self.rating}"
 
     # this is ugly, I'm sure there's a better way to do it 
     def insert(self, guitar_id:edgedb.pgproto.pgproto.UUID, client:edgedb.Client):
@@ -25,17 +22,11 @@ class Review:
        
         rating = self.rating if self.rating is not None else float()
         rev_date = self.date if self.date is not None else str()
-        pros = self.pros if len(self.pros) > 0 else edgedb.Set()
-        cons = self.cons if len(self.cons) > 0 else edgedb.Set()
-        best_for = self.best_for if len(self.best_for) > 0 else edgedb.Set()
         text = self.text if self.text is not None else str()
 
         query_str = """INSERT Review {
                         normalized_rating := <float64>$rating,
                         date := <std::datetime>$rev_date, 
-                        pros := <array<str>>$pros,
-                        cons := <array<str>>$cons,
-                        best_for := <array<str>>$best_for,
                         written_review := <str>$text,
                         guitar := (
                             SELECT Guitar
@@ -47,9 +38,9 @@ class Review:
                         ),
                         }
                         """
-        return_val = client.query(query_str, rating=rating, rev_date=rev_date, pros=pros,\
-                            cons = cons, best_for = best_for, text = text, guitar_id = guitar_id,\
-                            review_source = self.review_source)
+        return_val = client.query(query_str, rating=rating, rev_date=rev_date,\
+                            text = text, guitar_id = guitar_id, review_source = self.review_source)
+
         
         # insert or update the reviewer 
         query_str = """INSERT Reviewer {
@@ -86,7 +77,9 @@ class Guitar:
     def __init__(self, model:str, description:str = None, features = None, specs = None,\
                 body_shape:str = None, cutaway:str = None, pickups:str = None,\
                 num_strings:int = None, scale_length:float = None, num_frets:int = None,\
-                country_of_origin:str = None, manufacturer:str = None, guitar_type:str = 'Unknown'):
+                country_of_origin:str = None, manufacturer:str = None, guitar_type:str = 'Unknown',\
+                pros:list = None, cons:list = None, best_for:list = None):
+                
         
         # fill everything out
         self.model = model #
@@ -102,6 +95,9 @@ class Guitar:
         self.specs = specs #
         self.guitar_type = guitar_type
         self.manufacturer = manufacturer
+        self.pros = pros
+        self.cons = cons
+        self.best_for = best_for
 
 
     # instantiating string methods
@@ -128,6 +124,9 @@ class Guitar:
         num_strings = self.num_strings if self.num_strings is not None else int()
         scale_length = self.scale_length if self.scale_length is not None else float()
         num_frets = self.num_frets if self.num_frets is not None else int()
+        pros = self.pros if len(self.pros) > 0 else edgedb.Set()
+        cons = self.cons if len(self.cons) > 0 else edgedb.Set()
+        best_for = self.best_for if len(self.best_for) > 0 else edgedb.Set()
 
         # create the query string
         query_str = """ INSERT Guitar {
@@ -139,6 +138,10 @@ class Guitar:
                             num_strings := <int32>$num_strings,
                             scale_length := <float64>$scale_length,
                             num_frets := <int32>$num_frets,
+
+                            pros := <array<str>>$pros,
+                            cons := <array<str>>$cons,
+                            best_for := <array<str>>$best_for,
 
                             brand := (
                                 INSERT Manufacturer {
@@ -154,8 +157,9 @@ class Guitar:
                         UNLESS CONFLICT ON .model
                     """
         resp = client.query(query_str, model=self.model, guitar_type = self.guitar_type, description=description,\
-             body_shape=body_shape, cutaway=cutaway, num_strings=num_strings,\
-             scale_length=scale_length, num_frets=num_frets, manufacturer=self.manufacturer)                      
+            body_shape=body_shape, cutaway=cutaway, num_strings=num_strings,\
+            scale_length=scale_length, num_frets=num_frets, manufacturer=self.manufacturer,\
+            pros = pros, cons = cons, best_for=best_for)
 
         return resp[0].id  # id of the inserted guitar
 

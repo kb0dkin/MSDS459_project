@@ -95,21 +95,7 @@ def gc_extract_review_info(html) -> list :
         else:
             text = ""
 
-        # pros and cons
-        pros_list = re.findall(r'Pros</dt>(.*?)</dl>',snippet, re.DOTALL)
-        pros_list = [re.findall(r'<dd>(.*?)</dd>', pro) for pro in pros_list]
-        pros_list = [item for sublist in pros_list for item in sublist]
-
-        cons_list = re.findall(r'Cons</dt>(.*?)</dl>',snippet, re.DOTALL)
-        cons_list = [re.findall(r'<dd>(.*?)</dd>', con) for con in cons_list]
-        cons_list = [item for sublist in cons_list for item in sublist]
-
-        # best_for 
-        best_for_list = re.findall(r'Best for</dt>(.*?)</dl>', snippet, re.DOTALL)
-        best_for_list = [re.findall(r'<dd>(.*?)</dd>', best) for best in best_for_list]
-        best_for_list = [item for sublist in best_for_list for item in sublist]
-
-        review = class_definitions.Review(rating, title, text, author, date, pros_list, cons_list, best_for_list)
+        review = class_definitions.Review(rating, title, text, author, date)
         reviews.append(review)
 
     # return as a list
@@ -157,7 +143,7 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
     if (re.search(r'[C|c]lassical',features_raw) is not None) or (re.search(r'[C|c]lassical',model) is not None):
         guitar_type = 'Classical'
     elif (re.search(r'[A|a]coustic[ |-][E|electric]', features_raw) is not None) or (re.search(r'[A|a]coustic [E|electric]', model) is not None):
-        guitar_type = 'Acoustic Electric'
+        guitar_type = 'Acoustic-Electric'
     elif (re.search(r'[A|a]coustic', features_raw) is not None) or (re.search(r'[A|a]coustic', model) is not None):
         guitar_type = 'Acoustic'
     elif (re.search(r'[E|e]lectric', features_raw) is not None) or (re.search(r'[E|e]lectric', model) is not None):
@@ -166,8 +152,24 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
         guitar_type = 'Travel'
 
 
+    # pros and cons
+    pros_list = re.findall(r'Pros</dt>(.*?)</dl>',snippet, re.DOTALL)
+    pros_list = [re.findall(r'<dd>(.*?)</dd>', pro) for pro in pros_list]
+    pros_list = [item for sublist in pros_list for item in sublist]
 
-    guitar = class_definitions.Guitar(model=model, description=description, features=feature_list, guitar_type=guitar_type, manufacturer=manufacturer)
+    cons_list = re.findall(r'Cons</dt>(.*?)</dl>',snippet, re.DOTALL)
+    cons_list = [re.findall(r'<dd>(.*?)</dd>', con) for con in cons_list]
+    cons_list = [item for sublist in cons_list for item in sublist]
+
+    # best_for 
+    best_for_list = re.findall(r'Best for</dt>(.*?)</dl>', snippet, re.DOTALL)
+    best_for_list = [re.findall(r'<dd>(.*?)</dd>', best) for best in best_for_list]
+    best_for_list = [item for sublist in best_for_list for item in sublist]
+
+    # populate the guitar, put the features into the guitar 
+    guitar = class_definitions.Guitar(model=model, description=description, features=feature_list,\
+                                        guitar_type=guitar_type, manufacturer=manufacturer, pros=pros_list,\
+                                        cons=cons_list, best_for=best_for_list)
     guitar = feat_dict_into_guitar(guitar=guitar, feat_dict=feature_dict)
 
     # see if we can fill in the number of strings using a regular expression

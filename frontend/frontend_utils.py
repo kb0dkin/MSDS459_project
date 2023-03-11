@@ -64,16 +64,33 @@ def request_parser(req_raw:str):
             req_out[key] = matches
 
     # asssemble the query string 
-    query_str = 'SELECT Guitar {model, description} filter '
+    query_str = 'SELECT Guitar {model, description} '
     delim_str = "', '"
+    filter_count = 0
     for key,value in req_out.items():
-        query_str = query_str + f" .{key} in {{ \'{delim_str.join(value)}\' }}"
+        if filter_count == 0: # add the filter term -- this allows us to return something random if nothing matches
+            query_str += "filter "
+            filter_count += 1
+
+        else: # add and AND if we have multiple filters
+            query_str = query_str + " AND "
+
+        query_str = query_str + f" .{key} in {{ \'{delim_str.join(value)}\' }} "
+        
+
 
     # now look for manufacturers
     manus = find_manufacturers(client)
     manu_matches = [item for item in manus if str(item).lower() in req_list]
     if len(manu_matches) > 0:
-        query_str = query_str + f'.brand.name in {{ \'{delim_str.join(manu_matches)}\' }}'
+        if filter_count == 0: # add the filter term -- this allows us to return something random if nothing matches
+            query_str += "filter "
+            filter_count += 1
+
+        else: # add and AND if we have multiple filters
+            query_str = query_str + " AND "
+
+        query_str = query_str + f'.brand.name in {{ \'{delim_str.join(manu_matches)}\' }} '
 
     query_str = query_str + ' limit 5;'
 

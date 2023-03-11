@@ -100,10 +100,11 @@ client.query(""" INSERT Vendor {
 # for url in url_list:
 # for url_ii, url in enumerate(url_list):
 print("Scraping individual guitars")
-n_urls = len(url_list)
-for i in range(0, n_urls): # can modify this while debugging
+# n_urls = len(url_list)
+# for i in range(0, n_urls): # can modify this while debugging
     # load from file
-    url = url_list[i]
+    # url = url_list[i]
+for url in url_list:
     with open(f"{saveDir}/{url[1:-3]}.html", "r", encoding='utf-8') as file:
         html = file.read()
     reviews = scrape_utils.gc_extract_review_info(html) # parse the review info

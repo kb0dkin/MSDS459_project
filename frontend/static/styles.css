@@ -3,6 +3,8 @@ body {
     color: lightgray;
     background-image: url('Guitar_Background.png');
     background-position: center;
+    /* width: 100%; */
+    /* height: 100%; */
     
     
 }
@@ -23,13 +25,14 @@ article {
     border-radius: 1em;
 }
 
-#footer {
-    flex-grow: 0;
+.footer {
+    flex-grow: 10;
     flex-shrink: 0;
-    position:relative;
+    position: absolute;
     bottom: 0px;
     padding: 1em;
-    background-color: black;
+    background-color: rgb(50,50,50);
+    
 
 }
 
@@ -41,11 +44,18 @@ article {
 }
 
 .LargeEntry {
-    margin: 1em;
-    padding: 2em;
+    /* margin: 1em; */
+    /* padding: 2em;  */
     border-color: rgb(50,50,50);
-    min-height: 5ch;
-    align-self: stretch;
-    width: 80%;
+    border-width: 0em;
+    min-height: 10ch;
+    /* text-align: start; */
+    /* align-self: stretch; */
+    width: 100%;
+    resize: none;
 
+}
+
+.nested {
+    margin: 2em;
 }

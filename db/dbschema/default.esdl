@@ -1,5 +1,5 @@
 module default {
-  scalar type SourceType extending enum<Vendor, Independent>
+  scalar type SourceType extending enum<Vendor, Independent>;
   
   type Guitar {
     required property type -> str; # acoustic, electric, acoustic/electric?

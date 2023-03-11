@@ -28,4 +28,4 @@ product_pages_full
 *.swp
 
 # stuff from the gecko driver
-scraper/geckodriver.log
+*geckodriver.log

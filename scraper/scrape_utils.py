@@ -162,16 +162,16 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
 
 
     # pros and cons
-    pros_list = re.findall(r'Pros</dt>(.*?)</dl>',snippet, re.DOTALL)
+    pros_list = re.findall(r'Pros</dt>(.*?)</dl>',html, re.DOTALL)
     pros_list = [re.findall(r'<dd>(.*?)</dd>', pro) for pro in pros_list]
     pros_list = [item for sublist in pros_list for item in sublist]
 
-    cons_list = re.findall(r'Cons</dt>(.*?)</dl>',snippet, re.DOTALL)
+    cons_list = re.findall(r'Cons</dt>(.*?)</dl>',html, re.DOTALL)
     cons_list = [re.findall(r'<dd>(.*?)</dd>', con) for con in cons_list]
     cons_list = [item for sublist in cons_list for item in sublist]
 
     # best_for 
-    best_for_list = re.findall(r'Best for</dt>(.*?)</dl>', snippet, re.DOTALL)
+    best_for_list = re.findall(r'Best for</dt>(.*?)</dl>', html, re.DOTALL)
     best_for_list = [re.findall(r'<dd>(.*?)</dd>', best) for best in best_for_list]
     best_for_list = [item for sublist in best_for_list for item in sublist]
 
@@ -198,7 +198,9 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
     # get the body shape (called body type in the specs).  Not 100% reliable at this point.
     match = re.search(r"Body Type:\s*(.{40})", specs_raw, re.IGNORECASE)
     if match is not None:
-        body_shape = re.search(r"^\t*(.*?)\\", match.group(1)).group(1)
+        match = re.search(r"^\t*(.*?)\\", match.group(1))
+        if match is not None:
+            body_shape = match.group(1)
     else:
         body_shape = "unknown"
 

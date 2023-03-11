@@ -21,7 +21,7 @@ import scrape_utils
 import class_definitions
 
 have_urls = True
-have_pages = False
+have_pages = True
 saveDir = "../product_pages_full" # for the html files
 
 # create new instance of firefox driver -- this should be the geckodriver
@@ -108,6 +108,7 @@ for i in range(0, n_urls): # can modify this while debugging
         html = file.read()
     reviews = scrape_utils.gc_extract_review_info(html) # parse the review info
     guitar = scrape_utils.gc_extract_guitar_info(url, html) # parse the specs for the guitar
+    print(guitar.scale_length)
 
     try:
         guitar_id = guitar.insert(client) # insert the guitar, get the uuid

@@ -86,8 +86,9 @@ class Guitar:
     def __init__(self, model:str, description:str = None, features = None, specs = None,\
                 body_shape:str = None, cutaway:str = None, pickups:str = None,\
                 num_strings:int = None, scale_length:float = None, num_frets:int = None,\
-                country_of_origin:str = None, manufacturer:str = None, guitar_type:str = 'Unknown'):
-        
+                country_of_origin:str = None, manufacturer:str = None, guitar_type:str = 'Unknown',\
+                url:str = None):
+
         # fill everything out
         self.model = model #
         self.description = description
@@ -102,6 +103,7 @@ class Guitar:
         self.specs = specs #
         self.guitar_type = guitar_type
         self.manufacturer = manufacturer
+        self.url = url
 
 
     # instantiating string methods
@@ -128,6 +130,7 @@ class Guitar:
         num_strings = self.num_strings if self.num_strings is not None else int()
         scale_length = self.scale_length if self.scale_length is not None else float()
         num_frets = self.num_frets if self.num_frets is not None else int()
+        url = self.url if self.url is not None else str()
 
         # create the query string
         query_str = """ INSERT Guitar {
@@ -139,6 +142,7 @@ class Guitar:
                             num_strings := <int32>$num_strings,
                             scale_length := <float64>$scale_length,
                             num_frets := <int32>$num_frets,
+                            url := <str>$url,
 
                             brand := (
                                 INSERT Manufacturer {
@@ -155,7 +159,7 @@ class Guitar:
                     """
         resp = client.query(query_str, model=self.model, guitar_type = self.guitar_type, description=description,\
              body_shape=body_shape, cutaway=cutaway, num_strings=num_strings,\
-             scale_length=scale_length, num_frets=num_frets, manufacturer=self.manufacturer)                      
+             scale_length=scale_length, num_frets=num_frets, manufacturer=self.manufacturer, url=url)
 
         return resp[0].id  # id of the inserted guitar
 

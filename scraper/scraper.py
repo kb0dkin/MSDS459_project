@@ -24,6 +24,7 @@ import class_definitions
 have_urls = True # changed this to just check if the file exists
 have_pages = True
 saveDir = "../product_pages_full" # for the html files
+save_to_pickle = True
 
 # create new instance of firefox driver -- this should be the geckodriver
 options = Options()
@@ -112,8 +113,16 @@ client.query(""" INSERT Vendor {
             } UNLESS CONFLICT """)
 
 
+
+if save_to_pickle:
+    import pickle
+    review_list = []
+    guitar_list = []
+    print("Adding guitars and reviews to pickle files")
+else:
+    print("Adding guitars to the database")
+
 # iterate through the urls
-print("Adding guitars to the database")
 for url in url_list:
 
     # check to make sure that we have scraped the html
@@ -127,22 +136,31 @@ for url in url_list:
         # scrape_utils.printGuitar(guitar) # uncomment for debugging
         # print(guitar.scale_length)
 
-
         print("guitar.model: ", guitar.model)
-        if len(client.query(f"SELECT Guitar filter .model = '{guitar.model}'")):
-            input("Press Enter to continue...")
-            try:
-                guitar_id = guitar.insert(client) # insert the guitar, get the uuid
+        if not save_to_pickle:
+            if len(client.query(f"SELECT Guitar filter .model = '{guitar.model}'")):
+                input("Press Enter to continue...")
+                try:
+                    guitar_id = guitar.insert(client) # insert the guitar, get the uuid
 
-                for review in reviews:
-                    review.insert(guitar_id, client)
+                    for review in reviews:
+                        review.insert(guitar_id, client)
 
-            except:
-                print(f'Could not insert guitar {guitar.model}')
+                except:
+                    print(f'Could not insert guitar {guitar.model}')
+        else:
+            guitar_list.append(guitar)
+            review_list.append(reviews)
 
     else:
         print(f"{url_file} has not been downloaded")
 
+if save_to_pickle:
+    print("Saving guitars and reviews to pickle files")
+    with open('guitars.pickle', 'wb') as file:
+        pickle.dump(guitar_list, file)
+    with open('reviews.pickle', 'wb') as file:
+        pickle.dump(review_list, file)
 
 
 

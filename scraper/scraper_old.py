@@ -63,7 +63,7 @@ else:
 if not have_pages:
     print("Downloading HTML pages for all Guitar Center URLs.")
     n_urls = len(url_list)
-    for i in range(316, n_urls): # can modify this to only download a subset of the urls at a time
+    for i in range(729, n_urls): # can modify this to only download a subset of the urls at a time
         # Construct the full URL
         url_partial = url_list[i]
         print(f"{i}: {url_partial}")

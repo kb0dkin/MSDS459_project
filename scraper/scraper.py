@@ -66,7 +66,7 @@ else:
 
 # urls to use for scraping and inserting into the db.
 n_urls = len(url_list)
-scrape_start = n_urls-100 # should probably make this changeable from the command line 
+scrape_start = 211 # should probably make this changeable from the command line
 scrape_end = n_urls
 len_scrape = scrape_end-scrape_start
 
@@ -79,10 +79,10 @@ if not have_pages:
 
         # a nice little status bar :)
         curr_status = int(np.ceil(i_url/status_steps))
+        url_partial = url_list[i_url]
         print(f"[{curr_status*'-'}{(20-curr_status)*' '}]   {url_partial}",end='\r')    
 
         # Construct the full URL
-        url_partial = url_list[i_url]
         save_name = f"{saveDir}{path.splitext(url_partial)[0]}.html"
         if not path.exists(save_name):
             url = "https://www.guitarcenter.com" + url_partial
@@ -124,9 +124,13 @@ for url in url_list:
 
         reviews = scrape_utils.gc_extract_review_info(html) # parse the review info
         guitar = scrape_utils.gc_extract_guitar_info(url, html) # parse the specs for the guitar
+        # scrape_utils.printGuitar(guitar) # uncomment for debugging
         # print(guitar.scale_length)
 
+
+        print("guitar.model: ", guitar.model)
         if len(client.query(f"SELECT Guitar filter .model = '{guitar.model}'")):
+            input("Press Enter to continue...")
             try:
                 guitar_id = guitar.insert(client) # insert the guitar, get the uuid
 

@@ -196,10 +196,10 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
             num_strings = None
 
     # get the body shape (called body type in the specs).  Not 100% reliable at this point.
-    match = re.search(r"Body Type:\s*(.{40})", specs_raw, re.IGNORECASE)
+    match = re.search(r"Body Type:\s*(.{40})", specs_raw, re.ASCII)
     body_shape = "unknown"
     if match is not None:
-        match = re.search(r"^\t*(.*?)\\", match.group(1))
+        match = re.search(r"^\t*(.*?)\\", match.group(1), re.ASCII)
         if match is not None:
             body_shape = match.group(1)
 
@@ -323,4 +323,21 @@ def feat_dict_into_guitar(guitar:class_definitions.Guitar,feat_dict:dict) -> cla
     
     return guitar
 
-
+def printGuitar(guitar):
+    print("Model: " + guitar.model)
+    print("Description: " + guitar.description)
+    print("Features: " + str(guitar.features))
+    print("Guitar type: " + guitar.guitar_type)
+    print("Manufacturer: " + guitar.manufacturer)
+    print("URL: " + guitar.url)
+    print("Number of strings: " + str(guitar.num_strings))
+    print("Body shape: " + guitar.body_shape)
+    print("Number of frets: " + str(guitar.num_frets))
+    # print("Pickups: " + guitar.pickups)
+    print("Scale length: " + str(guitar.scale_length))
+    # print("Cutaway: " + guitar.cutaway)
+    print("Pros: " + str(guitar.pros))
+    print("Cons: " + str(guitar.cons))
+    print("Best for: " + str(guitar.best_for))
+    input("Press Enter to continue...")
+    print("")

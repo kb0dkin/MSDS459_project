@@ -24,6 +24,7 @@ import class_definitions
 have_urls = True # changed this to just check if the file exists
 have_pages = True
 saveDir = "../product_pages_full" # for the html files
+save_to_pickle = True
 
 # create new instance of firefox driver -- this should be the geckodriver
 options = Options()
@@ -117,6 +118,15 @@ client.query(""" INSERT Vendor {
 
 
 
+
+if save_to_pickle:
+    import pickle
+    review_list = []
+    guitar_list = []
+    print("Adding guitars and reviews to pickle files")
+else:
+    print("Adding guitars to the database")
+
 # iterate through the urls
 print("\nAdding guitars to the database")
 add_list = []
@@ -154,11 +164,22 @@ for i_url,url in enumerate(url_list):
                 fail_list.append(url)
         else:
             skip_list.append(url)
+            if save_to_pickle:
+                guitar_list.append(guitar)
+                review_list.append(reviews)
 
     else:
         # print(f"{url_file} has not been downloaded")
         miss_list.append(url)
 
+
+
+if save_to_pickle:
+    print("Saving guitars and reviews to pickle files")
+    with open('guitars.pickle', 'wb') as file:
+        pickle.dump(guitar_list, file)
+    with open('reviews.pickle', 'wb') as file:
+        pickle.dump(review_list, file)
 print('\n') # so we don't just overwrite part of the status bar
 print('Upload Statistics:')
 print(f"\t{len(add_list)} Guitars added")

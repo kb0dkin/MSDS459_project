@@ -132,12 +132,14 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
     # get features, which is the string following "features"
     # sometimes there are two occurrences, in which case we take the second one (hopefully this works consistently)
     match = re.findall(r'"features":"([^"]+)"', html)
-    if len(match) == 0:
+    if len(match)==0:
         features_raw = ""
+        feature_list = []
+        feature_dict = {}
     else:
         features_raw = match[-1] # if there are two, take the second one
-    feature_list = fix_features(extract_strings(features_raw))
-    feature_dict = feature_list_to_dict(feature_list) # convert to a dict
+        feature_list = fix_features(extract_strings(features_raw))
+        feature_dict = feature_list_to_dict(feature_list) # convert to a dict
 
     # get specs, which is the string following "specifications"
     match = re.search(r'"specifications":"([^"]+)"', html)

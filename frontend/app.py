@@ -4,6 +4,8 @@ from bokeh.plotting import figure
 from bokeh.resources import CDN
 from bokeh.embed import file_html
 import frontend_utils
+import json
+import bokeh_utils
 
 app = Flask(__name__)
 
@@ -28,9 +30,15 @@ def recommender_base():
 # --------------------------------------------------------
 @app.route("/DataExploration", methods=['POST','GET'])
 def data_exploration():
-    return plot_data_grabber()
+    script1, script2, script3, div1, div2, div3 = bokeh_utils.get_bokeh_items()
+    # Return all the charts to the HTML template
+    return render_template(
+        template_name_or_list='explore_base.html',
+        script=[script1, script2, script3],
+        div=[div1, div2, div3],
+    )
 
-# --------------------------------------------------------
+
 # parse the string that the person puts in using NER (for now) and
 # then turn it into an edgeql request
 @app.route("/KV_request")

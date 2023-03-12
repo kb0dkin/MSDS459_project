@@ -24,7 +24,7 @@ import class_definitions
 have_urls = True # changed this to just check if the file exists
 have_pages = True
 saveDir = "../product_pages_full" # for the html files
-save_to_pickle = True
+save_to_pickle = False
 
 # create new instance of firefox driver -- this should be the geckodriver
 options = Options()
@@ -124,17 +124,21 @@ if save_to_pickle:
     review_list = []
     guitar_list = []
     print("Adding guitars and reviews to pickle files")
-else:
-    print("Adding guitars to the database")
+
+# basic logging 
+print("\nAdding guitars to the database")
+add_counter = 0
+skip_counter = 0
+miss_counter = 0
+fail_counter = 0
+status_steps = np.ceil(len(url_list)/20) # for a status bar
+
+# initialize TF model
+#   that way we can just pass it to the utils, rather than
+#   reinitializing it for each guitar
+BERT_model = scrape_utils.BERT_embed_model()
 
 # iterate through the urls
-print("\nAdding guitars to the database")
-add_list = []
-skip_list = []
-miss_list = []
-fail_list = []
-
-status_steps = np.ceil(len(url_list)/20) # for a status bar
 for i_url,url in enumerate(url_list):
 
     # a nice little status bar :)
@@ -153,25 +157,34 @@ for i_url,url in enumerate(url_list):
 
         if len(client.query(f"SELECT Guitar filter .model = <str>$model", model=guitar.model)):
             try:
-                guitar_id = guitar.insert(client) # insert the guitar, get the uuid
+                guitar_id = guitar.insert(client, embedder = BERT_model) # insert the guitar, get the uuid
 
                 for review in reviews:
                     review.insert(guitar_id, client)
-                add_list.append(url)
+                add_counter += 1
+            
+                if save_to_pickle:
+                    guitar_list.append(guitar)
+                    review_list.append(reviews)
 
             except:
-                # print(f'Could not insert guitar {guitar.model}')
-                fail_list.append(url)
+                fail_counter += 1
+
         else:
-            skip_list.append(url)
-            if save_to_pickle:
-                guitar_list.append(guitar)
-                review_list.append(reviews)
+            skip_counter += 1
 
     else:
         # print(f"{url_file} has not been downloaded")
-        miss_list.append(url)
+        miss_counter += 1
 
+
+# print out the stats
+print('\n') # so we don't just overwrite part of the status bar
+print('Upload Statistics:')
+print(f"\t{add_counter} Guitars added")
+print(f"\t{skip_counter} Guitars were already in the database")
+print(f"\t{miss_counter} html files were missing")
+print(f"\t{fail_counter} attempts failed for unknown reasons")
 
 
 if save_to_pickle:
@@ -180,14 +193,6 @@ if save_to_pickle:
         pickle.dump(guitar_list, file)
     with open('reviews.pickle', 'wb') as file:
         pickle.dump(review_list, file)
-print('\n') # so we don't just overwrite part of the status bar
-print('Upload Statistics:')
-print(f"\t{len(add_list)} Guitars added")
-print(f"\t{len(skip_list)} Guitars were already in the database")
-print(f"\t{len(miss_list)} html files were missing")
-print(f"\t{len(fail_list)} attempts failed for unknown reasons")
-
-
 
 # close everything up
 driver.close()

@@ -78,7 +78,8 @@ class Guitar:
                 body_shape:str = None, cutaway:str = None, pickups:str = None,\
                 num_strings:int = None, scale_length:float = None, num_frets:int = None,\
                 country_of_origin:str = None, manufacturer:str = None, guitar_type:str = 'Unknown',\
-                pros:list = [], cons:list = [], best_for:list = [], url:str = None):
+                pros:list = [], cons:list = [], best_for:list = [], url:str = None,\
+                embedding = []):
 
         # fill everything out
         self.model = model #
@@ -98,6 +99,7 @@ class Guitar:
         self.cons = cons
         self.best_for = best_for
         self.url = url
+        self.embedding = embedding
 
 
     # instantiating string methods
@@ -124,6 +126,7 @@ class Guitar:
         cons = self.cons if len(self.cons) > 0 else edgedb.Set()
         best_for = self.best_for if len(self.best_for) > 0 else edgedb.Set()
         url = self.url if self.url is not None else str()
+        embedding = self.embedding if len(self.embedding) > 0 else edgedb.Set()
 
         # create the query string
         query_str = """ INSERT Guitar {
@@ -139,6 +142,7 @@ class Guitar:
                             cons := <array<str>>$cons,
                             best_for := <array<str>>$best_for,
                             url := <str>$url,
+                            embedding := <array<float32>>$embedding,
 
                             brand := (
                                 INSERT Manufacturer {
@@ -156,7 +160,7 @@ class Guitar:
         resp = client.query(query_str, model=self.model, guitar_type = self.guitar_type, description=description,\
             body_shape=body_shape, cutaway=cutaway, num_strings=num_strings,\
             scale_length=scale_length, num_frets=num_frets, manufacturer=self.manufacturer,\
-            pros = pros, cons = cons, best_for=best_for, url=url)
+            pros = pros, cons = cons, best_for=best_for, url=url, embedding=embedding)
 
         return resp[0].id  # id of the inserted guitar
 

@@ -8,6 +8,11 @@ import re
 import class_definitions
 import datetime
 
+## TF stuff
+import tensorflow as tf
+import tensorflow_hub as hub
+import tensorflow_text as text
+
 
 
 # return the html doc for the GC browsing page. 
@@ -103,7 +108,7 @@ def gc_extract_review_info(html) -> list :
 
 
 # parse all of the desired spec info for the guitars from the html
-def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
+def gc_extract_guitar_info(url, html, BERT_model = None) -> class_definitions.Guitar:
 
     # make and model
     match = re.search(r'[^/]*[^/]', url)
@@ -178,28 +183,20 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
     best_for_list = [re.findall(r'<dd>(.*?)</dd>', best) for best in best_for_list]
     best_for_list = [item for sublist in best_for_list for item in sublist]
 
-    # populate the guitar, put the features into the guitar 
-    guitar = class_definitions.Guitar(model=model, description=description, features=feature_list,\
-                                        guitar_type=guitar_type, manufacturer=manufacturer, pros=pros_list,\
-                                        cons=cons_list, best_for=best_for_list)
-    guitar = feat_dict_into_guitar(guitar=guitar, feat_dict=feature_dict)
-
     # see if we can fill in the number of strings using a regular expression
     # Note: this is more complicated than it should be, but hidden characters or something was causing problems
     # match = re.search(r"Number of strings:\s*(\d+)", specs_raw) # this should work, but sometimes doesn't
     match = re.search(r"Number of strings:\s*(.{5})", specs_raw, re.IGNORECASE)
     # print(match)
+    num_strings = None
     if match is not None:
-        try:
-            num_strings = int(re.findall(r"\d+", match.group(1))[0]) # failed on a particular guitar, not sure why
-        except:
-            num_strings = None
+        match = re.findall(r"\d+", match.group(1))
+        if len(match) > 0:
+            num_strings = int(match[0])
     else:
         match = re.search(r"Number of strings:\s*(.{5})", features_raw, re.IGNORECASE)
         if match is not None:
             num_strings = int(re.findall(r"\d+", match.group(1))[0])
-        else:
-            num_strings = None
 
     # get the body shape (called body type in the specs).  Not 100% reliable at this point.
     match = re.search(r"Body Type:\s*(.{40})", specs_raw, re.ASCII)
@@ -228,10 +225,17 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
     # url
     url_full = "https://www.guitarcenter.com" + url
 
+    # add in the embedding if it's available
+    if BERT_model is not None:
+        embedding = BERT_model.predict(description)['encoder_outputs'][0].tolist()
+    else:
+        embedding = []
+
+
     guitar = class_definitions.Guitar(model=model, description=description, features=feature_list,\
                                       guitar_type=guitar_type, manufacturer=manufacturer, url=url_full,\
                                       num_strings=num_strings, body_shape=body_shape, num_frets=num_frets,\
-                                      scale_length=scale_length)
+                                      scale_length=scale_length, embedding=embedding)
 
     # guitar = feat_dict_into_guitar(guitar=guitar, feat_dict=feature_dict) # redundant?  Need to discuss!
 
@@ -347,3 +351,27 @@ def printGuitar(guitar):
     print("Best for: " + str(guitar.best_for))
     input("Press Enter to continue...")
     print("")
+
+
+# ---------------------------------------------------------------------
+# Embedding the description in a pretrained BERT model
+# 
+#    This is for both the initial embeddings and the request, so it's 
+#    a helper function for those two
+def BERT_embed_model():
+    # let's start with small bert, just to make it a little more manageable
+    bert_handle = 'https://tfhub.dev/tensorflow/small_bert/bert_en_uncased_L-4_H-512_A-8/1'
+    prep_handle = 'https://tfhub.dev/tensorflow/bert_en_uncased_preprocess/3'
+
+    # turn text into a tensor
+    text_input = tf.keras.layers.Input(shape=(), dtype=tf.string, name='text')
+
+    prep_layer = hub.KerasLayer(prep_handle) # initially vectorize text
+    encoder_inputs = prep_layer(text_input) # define prep to encoder flow
+    encoder = hub.KerasLayer(bert_handle) # encoder (BERT) model
+    outputs = encoder(encoder_inputs) # flow through the model
+    # net = outputs['pooled output'] # what we 
+
+    return tf.keras.Model(text_input, outputs)
+    
+

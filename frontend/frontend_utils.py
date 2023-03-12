@@ -96,3 +96,24 @@ def request_parser(req_raw:str):
 
     return query_str
 
+
+# ----------------------------------------------------
+# Collecting and parsing data for plotting
+#
+# To fascilitate plotting etc, we'll take care of working with
+# edgedb back here, then just let the app handle the bokeh side 
+# of things
+def plot_data_grabber():
+    # initialize a client to connect to edgedb
+    client = edgedb.create_client('MSDS_459')
+
+    query_str = '''with gt := (GROUP Guitar {model} by .type)
+                    select gt {gguitars := .elements.model,
+                                guitar_type := .key.type};'''
+    type_grouping = client.query(query_str)
+
+    type_dict = {}
+    for guitar_type in type_grouping:
+        type_dict[guitar_type['guitar_type']] = guitar_type['gguitars']
+
+    return type_dict

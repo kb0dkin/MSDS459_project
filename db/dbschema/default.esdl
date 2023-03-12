@@ -17,6 +17,10 @@ module default {
     property country_of_origin -> str;
     property description -> str;
 
+    # url because I couldn't get it inserted with 
+    # conflicts into the seller link
+    property url -> str;
+
     property pros -> array<str>; # pros
     property cons -> array<str>; # cons
     property best_for -> array<str>; # what is the guitar best for?
@@ -24,10 +28,7 @@ module default {
     # links to other types
     # multi link ratings -> Review;
     link brand -> Manufacturer;
-    multi link seller -> Vendor {
-        property url -> str;
-        property price -> float64;
-    }
+    multi link seller -> Vendor 
   }
 
   type Review {

@@ -138,11 +138,11 @@ class Guitar:
                             pros := <array<str>>$pros,
                             cons := <array<str>>$cons,
                             best_for := <array<str>>$best_for,
+                            url := <str>$url,
 
                             brand := (
                                 INSERT Manufacturer {
                                     name := <str>$manufacturer,
-                                    url := <str>$url,
                                 }
                                 UNLESS CONFLICT ON Manufacturer.name
                                 ELSE Manufacturer

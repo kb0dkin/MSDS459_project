@@ -1,0 +1,15 @@
+{% extends base %}
+
+<!-- put each plot in its own article? -->
+{% block contents %}
+<article>
+    <div class="plot">
+        {{ embed(roots.brands) }}
+    </div>
+    <div class="plot">
+        {{ embed(roots.types) }}
+    </div>
+    <div class="plot">
+        {{ embed(roots.properties) }}
+    </div>
+</article>

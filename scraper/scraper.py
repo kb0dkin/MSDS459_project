@@ -85,16 +85,20 @@ if not have_pages:
         # Construct the full URL
         save_name = f"{saveDir}{path.splitext(url_partial)[0]}.html"
         if not path.exists(save_name):
-            url = "https://www.guitarcenter.com" + url_partial
-            driver.get(url)
-            html = scrape_utils.gc_get_all_reviews(driver, url)
+            try:
+                url = "https://www.guitarcenter.com" + url_partial
+                driver.get(url)
+                html = scrape_utils.gc_get_all_reviews(driver, url)
 
-            # create a directory as needed
-            subDir = path.split(url_partial)[0]
-            if not path.exists(saveDir + subDir):
-                os.makedirs(f"{saveDir}{subDir}")
-            with open(save_name, "w", encoding='utf-8') as file:
-                file.write(html)
+                # create a directory as needed
+                subDir = path.split(url_partial)[0]
+                if not path.exists(saveDir + subDir):
+                    os.makedirs(f"{saveDir}{subDir}")
+                with open(save_name, "w", encoding='utf-8') as file:
+                    file.write(html)
+            except TimeoutError:
+                print('\nLooks like GuitarCenter blocked your requests!')
+                break
 
 
 # open an edgedb instance
@@ -112,10 +116,21 @@ client.query(""" INSERT Vendor {
             } UNLESS CONFLICT """)
 
 
-# iterate through the urls
-print("Adding guitars to the database")
-for url in url_list:
 
+# iterate through the urls
+print("\nAdding guitars to the database")
+add_list = []
+skip_list = []
+miss_list = []
+fail_list = []
+
+status_steps = np.ceil(len(url_list)/20) # for a status bar
+for i_url,url in enumerate(url_list):
+
+    # a nice little status bar :)
+    curr_status = int(np.ceil(i_url/status_steps))
+    print(f"[{curr_status*'-'}{(20-curr_status)*' '}]   {i_url}/{len(url_list)}",end='\r')
+    
     # check to make sure that we have scraped the html
     url_file = f"{saveDir}/{url[1:-3]}.html"
     if path.exists(url_file):
@@ -125,7 +140,6 @@ for url in url_list:
         reviews = scrape_utils.gc_extract_review_info(html) # parse the review info
         guitar = scrape_utils.gc_extract_guitar_info(url, html) # parse the specs for the guitar
         # scrape_utils.printGuitar(guitar) # uncomment for debugging
-        # print(guitar.scale_length)
 
         if len(client.query(f"SELECT Guitar filter .model = <str>$model", model=guitar.model)):
             try:
@@ -133,13 +147,24 @@ for url in url_list:
 
                 for review in reviews:
                     review.insert(guitar_id, client)
+                add_list.append(url)
 
             except:
-                print(f'Could not insert guitar {guitar.model}')
+                # print(f'Could not insert guitar {guitar.model}')
+                fail_list.append(url)
+        else:
+            skip_list.append(url)
 
     else:
-        print(f"{url_file} has not been downloaded")
+        # print(f"{url_file} has not been downloaded")
+        miss_list.append(url)
 
+print('\n') # so we don't just overwrite part of the status bar
+print('Upload Statistics:')
+print(f"\t{len(add_list)} Guitars added")
+print(f"\t{len(skip_list)} Guitars were already in the database")
+print(f"\t{len(miss_list)} html files were missing")
+print(f"\t{len(fail_list)} attempts failed for unknown reasons")
 
 
 

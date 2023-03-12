@@ -116,6 +116,7 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
     match = re.search(r'"og:title" content="([^"]+)"', html)
     if match is None: 
         match = "" # what is the point of an un-named guitar?
+        model = ""
     else:
         model = match.group(1).replace("&nbsp;"," ")
         model = model.replace(manufacturer,'').lstrip() # pop out the manufacturer's name
@@ -189,7 +190,10 @@ def gc_extract_guitar_info(url, html) -> class_definitions.Guitar:
     match = re.search(r"Number of strings:\s*(.{5})", specs_raw, re.IGNORECASE)
     # print(match)
     if match is not None:
-        num_strings = int(re.findall(r"\d+", match.group(1))[0])
+        try:
+            num_strings = int(re.findall(r"\d+", match.group(1))[0]) # failed on a particular guitar, not sure why
+        except:
+            num_strings = None
     else:
         match = re.search(r"Number of strings:\s*(.{5})", features_raw, re.IGNORECASE)
         if match is not None:

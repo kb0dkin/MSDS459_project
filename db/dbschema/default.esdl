@@ -21,6 +21,10 @@ module default {
     # conflicts into the seller link
     property url -> str;
 
+    # BERT embedding of the description
+    property embedding -> array<float32>;
+
+    # lists of pros and cons etc
     property pros -> array<str>; # pros
     property cons -> array<str>; # cons
     property best_for -> array<str>; # what is the guitar best for?

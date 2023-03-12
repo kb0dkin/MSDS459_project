@@ -126,7 +126,7 @@ for url in url_list:
         guitar = scrape_utils.gc_extract_guitar_info(url, html) # parse the specs for the guitar
         # print(guitar.scale_length)
 
-        if len(client.query(f"SELECT Guitar filter .model = '{guitar.model}'")):
+        if len(client.query(f"SELECT Guitar filter .model = <str>$model", model=guitar.model)):
             try:
                 guitar_id = guitar.insert(client) # insert the guitar, get the uuid
 

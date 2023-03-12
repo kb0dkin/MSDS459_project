@@ -136,18 +136,15 @@ for url in url_list:
         # scrape_utils.printGuitar(guitar) # uncomment for debugging
         # print(guitar.scale_length)
 
-        print("guitar.model: ", guitar.model)
-        if not save_to_pickle:
-            if len(client.query(f"SELECT Guitar filter .model = '{guitar.model}'")):
-                input("Press Enter to continue...")
-                try:
-                    guitar_id = guitar.insert(client) # insert the guitar, get the uuid
+        if len(client.query(f"SELECT Guitar filter .model = <str>$model", model=guitar.model)):
+            try:
+                guitar_id = guitar.insert(client) # insert the guitar, get the uuid
 
-                    for review in reviews:
-                        review.insert(guitar_id, client)
+                for review in reviews:
+                    review.insert(guitar_id, client)
 
-                except:
-                    print(f'Could not insert guitar {guitar.model}')
+            except:
+                print(f'Could not insert guitar {guitar.model}')
         else:
             guitar_list.append(guitar)
             review_list.append(reviews)

@@ -11,14 +11,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bokeh/3.0.1/bokeh.min.js"
         integrity="sha512-p7EUyPmeDeOwHiu7fIZNboAcQLxei3sWtXoHoShWWiPNUSRng/Xs5JPcaFPRa4dKy9IuHjyIQuLE4caGCwuewA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  
-    <title>Bokeh Charts</title>
+
+    <title>The Guitar Recommender - Data Exploration</title>
+
 {% endblock %}
+
   
 {% block content %}
-        <article>
         <div class="container">
             <h1 class="text-center py-4">Guitar Database Analytics</h1>
+
+        <article>
             <div class="row">
                 <div class="col-md-12">
                     <h4 class="text-center">Number of Models per Manufacturer</h4>
@@ -26,6 +29,8 @@
                     {{ script[0] | safe }}
                 </div>
             </div>
+        </article>
+        <article>
             <div class="row mb-5">
                 <div class="col-md-6">
                     <h4 class="text-center">Number of Strings</h4>
@@ -38,8 +43,8 @@
                     {{ script[2] | safe }}
                 </div>
             </div>
-        </div>
-    </article>
+        </article>
+    </div>
   
 {% endblock %}
   

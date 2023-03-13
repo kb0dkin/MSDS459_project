@@ -124,6 +124,7 @@ def gc_extract_guitar_info(url, html, BERT_model = None) -> class_definitions.Gu
     match = re.search(r'"og:title" content="([^"]+)"', html)
     if match is None: 
         match = "" # what is the point of an un-named guitar?
+        model = ""
     else:
         model = match.group(1).replace("&nbsp;"," ")
         model = model.replace(manufacturer,'').lstrip() # pop out the manufacturer's name

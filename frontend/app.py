@@ -5,7 +5,11 @@ from bokeh.resources import CDN
 from bokeh.embed import file_html
 import frontend_utils
 import json
+import sys
+sys.path.insert(0, '../scraper')
+import class_definitions
 import bokeh_utils
+import pickle
 
 app = Flask(__name__)
 
@@ -30,12 +34,17 @@ def recommender_base():
 # --------------------------------------------------------
 @app.route("/DataExploration", methods=['POST','GET'])
 def data_exploration():
-    script1, script2, script3, div1, div2, div3 = bokeh_utils.get_bokeh_items()
+    # load data
+    with open('../scraper/guitars.pickle', 'rb') as f:
+        guitar_list = pickle.load(f)
+    with open('../scraper/reviews.pickle', 'rb') as f:
+        review_list = pickle.load(f)
+    script, div = bokeh_utils.get_bokeh_items(guitar_list, review_list)
     # Return all the charts to the HTML template
     return render_template(
         template_name_or_list='explore_base.html',
-        script=[script1, script2, script3],
-        div=[div1, div2, div3],
+        script=script,
+        div=div,
     )
 
 

@@ -7,11 +7,14 @@ from bs4 import BeautifulSoup
 import re
 import class_definitions
 import datetime
+import json
 
 ## TF stuff
 import tensorflow as tf
 import tensorflow_hub as hub
 import tensorflow_text as text
+
+import pandas as pd
 
 
 
@@ -227,7 +230,7 @@ def gc_extract_guitar_info(url, html, BERT_model = None) -> class_definitions.Gu
 
     # add in the embedding if it's available
     if BERT_model is not None:
-        embedding = BERT_model.predict(description)['encoder_outputs'][0].tolist()
+        embedding = json.dumps(BERT_model.predict([description], verbose=0)['encoder_outputs'][0].tolist())
     else:
         embedding = []
 

@@ -1,4 +1,13 @@
 import edgedb
+import random
+import numpy as np
+import json
+
+## TF stuff
+import tensorflow as tf
+import tensorflow_hub as hub
+import tensorflow_text as text
+
 
 # ---------------------------------------------
 # put together a dictionary of valid search terms,
@@ -64,7 +73,7 @@ def request_parser(req_raw:str):
             req_out[key] = matches
 
     # asssemble the query string 
-    query_str = 'SELECT Guitar {model, description} '
+    query_str = 'SELECT Guitar {model, description, brand: {name}, num_strings, type, cutaway, num_frets, scale_length} '
     delim_str = "', '"
     filter_count = 0
     for key,value in req_out.items():
@@ -117,3 +126,90 @@ def plot_data_grabber():
         type_dict[guitar_type['guitar_type']] = guitar_type['gguitars']
 
     return type_dict
+
+
+# -----------------------------------------------------
+# Import the BERT TF model, to allow for embeddings
+def BERT_embed_model():
+    # let's start with small bert, just to make it a little more manageable
+    bert_handle = 'https://tfhub.dev/tensorflow/small_bert/bert_en_uncased_L-4_H-512_A-8/1'
+    prep_handle = 'https://tfhub.dev/tensorflow/bert_en_uncased_preprocess/3'
+
+    # turn text into a tensor
+    text_input = tf.keras.layers.Input(shape=(), dtype=tf.string, name='text')
+
+    prep_layer = hub.KerasLayer(prep_handle) # initially vectorize text
+    encoder_inputs = prep_layer(text_input) # define prep to encoder flow
+    encoder = hub.KerasLayer(bert_handle) # encoder (BERT) model
+    outputs = encoder(encoder_inputs) # flow through the model
+    # net = outputs['pooled output'] # what we 
+
+    return tf.keras.Model(text_input, outputs)
+
+
+# -----------------------------------------------------
+# Embed the request, and look for the five closest description embeddings
+def NLP_Guitar_Finder(req:str):
+    BERT_model = BERT_embed_model()
+    embedding = BERT_model.predict([req])['encoder_outputs'][0]
+
+    # to make this work more quickly, we will find the 
+    # total number of guitars available and just take
+    # a random subset of 200
+    with edgedb.create_client('MSDS_459') as client:
+        # randomly choose an offset
+        num_gs = client.query('SELECT count(Guitar);')[0]
+        offset_gs = random.randint(0,num_gs-201)
+        
+        # Get a random subset of embeddings
+        embeds = client.query(f'SELECT Guitar {{ embedding, id }} OFFSET {offset_gs} limit 200;')
+        dist = np.ndarray([200,])    
+        for i_embed, embed in enumerate(embeds):
+            # convert embedding from json to numpy, then calculate the l2 
+            # (aka Distance)
+            dist[i_embed] = np.linalg.norm(np.array(json.loads(embed.embedding))-embedding)
+
+        closest_inds = np.argsort(dist)[0:5] # get the five closest
+
+        # create the query. I'm sure I could use arrays here.
+        sql_query = '''SELECT Guitar { model, brand: {name}, description, num_strings, num_frets, cutaway, scale_length}
+                        FILTER .id in 
+                        {  <uuid>$id0, <uuid>$id1, <uuid>$id2, <uuid>$id3, <uuid>$id4}'''
+        guitars = client.query(sql_query,\
+                            id0=embeds[closest_inds[0]].id,\
+                            id1=embeds[closest_inds[1]].id,\
+                            id2=embeds[closest_inds[2]].id,\
+                            id3=embeds[closest_inds[3]].id,\
+                            id4=embeds[closest_inds[4]].id )
+        
+        return guitars
+        
+
+# ----------------------------------------------------------
+# Results Parser
+#   Turning a series of nested Edgedb objects into dictionaries
+def Guitar_results_parser(guitars:list):
+
+    guitars_dict = {} # empty dict to store all of the guitars
+    for guitar in guitars: # iterate through the guitars
+        temp_dict = {} # dict per guitar
+        for key in dir(guitar): # iterate through properties
+            if key in ['model','id']: # ignore model and id
+               continue 
+            elif key == 'brand': # brand is different since it's a link
+                temp_dict[key] = guitar.brand.name
+            else: # make sure it isn't empty
+                attr = getattr(guitar, key)
+                if (attr != 0) and (attr != ''):
+                    temp_dict[key] = attr
+        
+        # put it all into the guitar_dict
+        guitars_dict[guitar.model] = temp_dict
+
+
+    return guitars_dict # send it home
+                
+        
+
+
+

@@ -59,19 +59,26 @@ def kv_request():
         query_str = frontend_utils.request_parser(req)
         guitars = client.query(query_str)
 
-    # convert to something we can use.
-    guitar_dict = {}
-    for i_guitar,guitar in enumerate(guitars):
-        guitar_dict[i_guitar] = {'model':guitar.model, 'description':guitar.description}
+    # parse into something nice for jinja
+    guitars_dict = frontend_utils.Guitar_results_parser(guitars)
 
-    return render_template('guitar_results.html', guitars=guitar_dict)
+    # render it
+    return render_template('guitar_results.html', guitars=guitars_dict)
 
 
 
 # --------------------------------------------------------
+# Find guitars that have the closest descriptions, per BERT
 @app.route("/NLP_request")
 def nlp_request():
-    with edgedb.create_client(dsn="MSDS_459") as client:
-        req = dict(request.args)['request']
+    # the request from the user
+    req = dict(request.args)['request']
 
-    return f"In Progress..."
+    # get a list of guitars
+    guitars = frontend_utils.NLP_Guitar_Finder(req)
+
+    # parse into something nice for jinja
+    guitars_dict = frontend_utils.Guitar_results_parser(guitars)
+    
+    # render it
+    return render_template('guitar_results.html', guitars=guitars_dict)

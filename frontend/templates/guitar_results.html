@@ -5,8 +5,25 @@
 
 {% for guitar in guitars %}
     <article>
-        <h3>{{ guitars[guitar]['model'] }}</h3>
-        {{ guitars[guitar]['description'] }}
+        <h2>{{ guitar }}</h2>
+        {% for key,value in guitars[guitar].items() %}
+            {% if key != 'description' %}
+            <ul>
+                <li>
+                   <b>{{ key }}:</b> {{ value }}
+                </li>
+            </ul>
+            {% endif %}
+        {% endfor %}
+
+        {% if 'description' in guitars[guitar].keys() %}
+            <br><br>
+            <b>Description</b>
+            <br><br>
+            {{ guitars[guitar]['description'] }}
+        {% endif %}
+
+
 
         <br><br>
 

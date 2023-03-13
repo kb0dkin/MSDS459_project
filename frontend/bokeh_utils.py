@@ -1,6 +1,6 @@
 from bokeh.embed import components
 from bokeh.plotting import figure
-from bokeh.palettes import Category10
+from bokeh.palettes import Category10, Category20
 from bokeh.plotting import figure, show
 from bokeh.transform import cumsum
 import pandas as pd
@@ -75,6 +75,48 @@ def get_bokeh_items(guitar_list, review_list):
     p[c].wedge(x=0, y=1, radius=0.4,
             start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
             line_color="white", fill_color='color', legend_field='scale_length', source=data)
+    p[c].axis.axis_label = None
+    p[c].axis.visible = False
+    p[c].grid.grid_line_color = None
+
+    # Pie Chart for Guitar Type
+    c += 1; p.append([])
+    guitar_type_list = list(set([guitar.guitar_type for guitar in guitar_list]))
+    counts = {}
+    for guitar_type in guitar_type_list:
+        num_models = sum(guitar.guitar_type == guitar_type for guitar in guitar_list)
+        counts[guitar_type] = num_models
+    counts = {k if k is not None else 'Unknown': v for k, v in counts.items()} # convert None to 'Unknown'
+    counts = {k: v for k, v in counts.items() if k != 'Unknown'} # Move 'Unknown' to the end
+    data = pd.Series(counts).reset_index(name='value').rename(columns={'index': 'guitar_type'})
+    data['angle'] = data['value'] / data['value'].sum() * 2 * 3.1416
+    data['color'] = Category10[len(counts)]
+    p[c] = figure(height=350, toolbar_location=None, tools="hover",
+                tooltips="@guitar_type: @value", x_range=(-0.5, 1.0))
+    p[c].wedge(x=0, y=1, radius=0.4,
+            start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
+            line_color="white", fill_color='color', legend_field='guitar_type', source=data)
+    p[c].axis.axis_label = None
+    p[c].axis.visible = False
+    p[c].grid.grid_line_color = None
+
+    # Pie Chart for Number of Frets
+    c += 1; p.append([])
+    num_frets_list = list(set([guitar.num_frets for guitar in guitar_list]))
+    counts = {}
+    for num_frets in num_frets_list:
+        num_models = sum(guitar.num_frets == num_frets for guitar in guitar_list)
+        counts[num_frets] = num_models
+    counts = {k if k is not None else 0: v for k, v in counts.items()} # convert None to 0 for now
+    data = pd.Series(counts).reset_index(name='value').rename(columns={'index': 'num_frets'})
+    data['num_frets'] = data['num_frets'].apply(lambda x: 'Unknown' if x == 0 else x) # Convert 0 to 'Unknown'
+    data['angle'] = data['value'] / data['value'].sum() * 2 * 3.1416
+    data['color'] = Category20[len(counts)]
+    p[c] = figure(height=350, toolbar_location=None, tools="hover",
+                tooltips="@num_frets: @value", x_range=(-0.5, 1.0))
+    p[c].wedge(x=0, y=1, radius=0.4,
+            start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),
+            line_color="white", fill_color='color', legend_field='num_frets', source=data)
     p[c].axis.axis_label = None
     p[c].axis.visible = False
     p[c].grid.grid_line_color = None

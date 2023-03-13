@@ -22,7 +22,7 @@ module default {
     property url -> str;
 
     # BERT embedding of the description
-    property embedding -> array<float32>;
+    property embedding -> json;
 
     # lists of pros and cons etc
     property pros -> array<str>; # pros

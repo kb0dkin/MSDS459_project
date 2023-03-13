@@ -1,4 +1,5 @@
 import edgedb
+import json
 
 
 # Make a Review class that has attributes "name", "location", "title", "text", "rating", "pros", "cons" and "best_for"
@@ -142,7 +143,7 @@ class Guitar:
                             cons := <array<str>>$cons,
                             best_for := <array<str>>$best_for,
                             url := <str>$url,
-                            embedding := <array<float32>>$embedding,
+                            embedding := <json>$embedding,
 
                             brand := (
                                 INSERT Manufacturer {

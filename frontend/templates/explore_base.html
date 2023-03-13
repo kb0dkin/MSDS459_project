@@ -16,7 +16,7 @@
 {% endblock %}
   
 {% block content %}
-        <article>
+    <article>
         <div class="container">
             <h1 class="text-center py-4">Guitar Database Analytics</h1>
             <div class="row">
@@ -38,32 +38,19 @@
                     {{ script[2] | safe }}
                 </div>
             </div>
-        </div>
-        <div class="row mb-5">
-            <div class="col-md-6">
-                <h4 class="text-center">Number of Strings</h4>
-                {{ div[1] | safe }}
-                {{ script[1] | safe }}
-            </div>
-            <div class="col-md-6">
-                <h4 class="text-center">Scale Length</h4>
-                {{ div[2] | safe }}
-                {{ script[2] | safe }}
-            </div>
-        </div>
-        <div class="row mb-5">
-            <div class="col-md-6">
-                <h4 class="text-center">Guitar Type</h4>
-                {{ div[3] | safe }}
-                {{ script[3] | safe }}
-            </div>
-            <div class="col-md-6">
-                <h4 class="text-center">Number of Frets</h4>
-                {{ div[4] | safe }}
-                {{ script[4] | safe }}
+            <div class="row mb-5">
+                <div class="col-md-6">
+                    <h4 class="text-center">Guitar Type</h4>
+                    {{ div[3] | safe }}
+                    {{ script[3] | safe }}
+                </div>
+                <div class="col-md-6">
+                    <h4 class="text-center">Number of Frets</h4>
+                    {{ div[4] | safe }}
+                    {{ script[4] | safe }}
+                </div>
             </div>
         </div>
-    </div>
+    </article>
   
 {% endblock %}
-  
